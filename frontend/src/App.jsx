@@ -5,6 +5,7 @@ import { AboutUsSection } from './components/AboutUsSection';
 import { WhyChooseUs } from './components/WhyChooseUs';
 import { BookTrialSection } from './components/BookTrialSection';
 import { BookTrialModal } from './components/BookTrialModal';
+import { CheckoutModal } from './components/CheckoutModal';
 import { ClassesAndSchedule } from './components/ClassesAndSchedule';
 import { FacilityShowcase } from './components/FacilityShowcase';
 import { TestimonialsSection } from './components/TestimonialsSection';
@@ -20,6 +21,8 @@ export default function App() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [userProfileOpen, setUserProfileOpen] = useState(false);
   const [trialModalOpen, setTrialModalOpen] = useState(false);
+  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
+  const [selectedCheckoutPlan, setSelectedCheckoutPlan] = useState(null);
   const [user, setUser] = useState(null);
 
   const [videoModalData, setVideoModalData] = useState({
@@ -107,7 +110,13 @@ export default function App() {
       <TestimonialsSection />
 
       {/* Membership Pricing & Custom Builder */}
-      <MembershipCalculator onOpenAuth={() => setAuthModalOpen(true)} />
+      <MembershipCalculator
+        onJoinPlan={(plan) => {
+          setSelectedCheckoutPlan(plan);
+          setCheckoutModalOpen(true);
+        }}
+        onBookTrial={() => setTrialModalOpen(true)}
+      />
 
       {/* Contact Section */}
       <ContactSection />
@@ -126,6 +135,12 @@ export default function App() {
       <BookTrialModal
         isOpen={trialModalOpen}
         onClose={() => setTrialModalOpen(false)}
+      />
+
+      <CheckoutModal
+        isOpen={checkoutModalOpen}
+        onClose={() => setCheckoutModalOpen(false)}
+        selectedPlan={selectedCheckoutPlan}
       />
 
       <AuthModal
