@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, MessageSquareQuote, ExternalLink, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Star, MessageSquareQuote, ExternalLink, ShieldCheck } from 'lucide-react';
 
 const TESTIMONIALS_DATA = [
   {
@@ -7,6 +7,7 @@ const TESTIMONIALS_DATA = [
     name: 'Shubam',
     role: 'Verified Athlete',
     membership: 'Xclusive Pro Member',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
     avatarBg: 'from-[#D4AF37] to-[#9A6B16]',
     rating: 5,
     highlights: ['Personalized Training', 'Community Support'],
@@ -18,6 +19,7 @@ const TESTIMONIALS_DATA = [
     name: 'Shrishti',
     role: 'Verified Athlete',
     membership: 'Xclusive VIP Member',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
     avatarBg: 'from-[#F5D76E] to-[#D4AF37]',
     rating: 5,
     highlights: ['Personalized Training', 'Results & Coaching', 'Safety First'],
@@ -29,6 +31,7 @@ const TESTIMONIALS_DATA = [
     name: 'Anuradha',
     role: 'Verified Athlete',
     membership: 'Xclusive Club Access',
+    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
     avatarBg: 'from-[#D4AF37] to-[#C5A059]',
     rating: 5,
     highlights: ['Consistency', 'Professional Coaches', 'Training Variety'],
@@ -73,12 +76,15 @@ export const TestimonialsSection = () => {
               </div>
 
               <div>
-                {/* Member Header */}
+                {/* Member Header with Profile Image */}
                 <div className="flex items-center gap-4 mb-6">
-                  <div
-                    className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${t.avatarBg} text-black font-black text-xl flex items-center justify-center shadow-lg shadow-[#D4AF37]/20 shrink-0`}
-                  >
-                    {t.name.charAt(0)}
+                  <div className="w-14 h-14 rounded-2xl p-0.5 bg-gradient-to-br from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] shadow-lg shadow-[#D4AF37]/20 shrink-0 overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                    <img
+                      src={t.image}
+                      alt={t.name}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover rounded-[14px]"
+                    />
                   </div>
                   <div>
                     <h3 className="text-xl font-black italic uppercase text-white group-hover:text-[#F5D76E] transition-colors">

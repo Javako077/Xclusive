@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FACILITIES_DATA } from '../data/gymData';
-import { Building2, Play, CheckCircle2, Shield, Layers } from 'lucide-react';
+import { Building2, CheckCircle2, Shield, Layers } from 'lucide-react';
 
 export const FacilityShowcase = ({ onOpenVideo }) => {
   const [activeZone, setActiveZone] = useState(FACILITIES_DATA[0]);
@@ -46,9 +46,8 @@ export const FacilityShowcase = ({ onOpenVideo }) => {
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className={`text-[10px] font-black uppercase tracking-widest ${isActive ? 'text-black' : 'text-[#D4AF37]'}`}>
-                    {zone.sqft.toLocaleString()} SQ FT POD
+                    {zone.sqft.toLocaleString()} SQ FT ZONING
                   </span>
-                  {isActive && <span className="w-2.5 h-2.5 rounded-full bg-black shadow-[0_0_10px_#000] animate-pulse" />}
                 </div>
                 <h3 className={`text-xl font-black italic uppercase mb-1 ${isActive ? 'text-black' : 'text-white'}`}>{zone.name}</h3>
                 <p className={`text-xs truncate ${isActive ? 'text-black/80 font-medium' : 'text-white/50'}`}>{zone.tagline}</p>
@@ -59,7 +58,7 @@ export const FacilityShowcase = ({ onOpenVideo }) => {
 
         {/* Active Zone Display Card */}
         <div className="bg-[#0f0c05]/95 border-2 border-[#D4AF37]/50 rounded-3xl overflow-hidden shadow-2xl shadow-[#D4AF37]/20 grid grid-cols-1 lg:grid-cols-12">
-          {/* Media Player Column */}
+          {/* Media Column */}
           <div className="lg:col-span-7 relative min-h-[340px] sm:min-h-[440px] overflow-hidden group">
             <img
               src={activeZone.image}
@@ -68,18 +67,6 @@ export const FacilityShowcase = ({ onOpenVideo }) => {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0f0c05] via-[#0f0c05]/40 to-transparent" />
-
-            {/* Play Video Trigger Overlay */}
-            {activeZone.videoUrl && (
-              <button
-                onClick={() => onOpenVideo(activeZone.videoUrl, activeZone.name)}
-                className="absolute inset-0 flex items-center justify-center group/btn cursor-pointer"
-              >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059] text-black flex items-center justify-center shadow-2xl shadow-[#D4AF37]/50 group-hover/btn:scale-110 transition-transform">
-                  <Play className="w-8 h-8 fill-black translate-x-0.5" />
-                </div>
-              </button>
-            )}
 
             <div className="absolute bottom-6 left-6 right-6">
               <span className="px-4 py-2 rounded-full bg-black/90 backdrop-blur-md text-[#D4AF37] text-xs font-black uppercase tracking-widest border border-[#D4AF37]/50 shadow-lg">
