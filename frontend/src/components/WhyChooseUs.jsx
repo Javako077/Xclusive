@@ -34,7 +34,7 @@ const WHY_CHOOSE_US_DATA = [
   },
 ];
 
-export const WhyChooseUs = () => {
+export const WhyChooseUs = ({ onOpenTrial }) => {
   return (
     <section id="why-us" className="py-24 bg-black text-white relative border-t border-[#D4AF37]/20 overflow-hidden">
       {/* Background Glow */}
@@ -104,12 +104,18 @@ export const WhyChooseUs = () => {
             <h3 className="text-2xl font-black italic uppercase text-white mb-1">READY TO EXPERIENCE THE XCLUSIVE DIFFERENCE?</h3>
             <p className="text-xs text-white/60">Claim your personalized trial session and consult with an expert athletic advisor today.</p>
           </div>
-          <a
-            href="#contact"
-            className="px-8 py-4 bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all flex items-center gap-2 shrink-0 shadow-lg shadow-[#D4AF37]/20"
+          <button
+            onClick={() => {
+              if (onOpenTrial) onOpenTrial();
+              else {
+                const el = document.getElementById('trial');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            className="px-8 py-4 bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all flex items-center gap-2 shrink-0 shadow-lg shadow-[#D4AF37]/20 cursor-pointer"
           >
             Book A Trial Session <ArrowRight className="w-4 h-4" />
-          </a>
+          </button>
         </div>
       </div>
     </section>

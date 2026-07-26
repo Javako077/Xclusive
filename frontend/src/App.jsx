@@ -3,6 +3,8 @@ import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { AboutUsSection } from './components/AboutUsSection';
 import { WhyChooseUs } from './components/WhyChooseUs';
+import { BookTrialSection } from './components/BookTrialSection';
+import { BookTrialModal } from './components/BookTrialModal';
 import { ClassesAndSchedule } from './components/ClassesAndSchedule';
 import { FacilityShowcase } from './components/FacilityShowcase';
 import { TestimonialsSection } from './components/TestimonialsSection';
@@ -17,6 +19,7 @@ import { apiService } from './services/api';
 export default function App() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [userProfileOpen, setUserProfileOpen] = useState(false);
+  const [trialModalOpen, setTrialModalOpen] = useState(false);
   const [user, setUser] = useState(null);
 
   const [videoModalData, setVideoModalData] = useState({
@@ -89,7 +92,10 @@ export default function App() {
       <AboutUsSection />
 
       {/* Why Choose Us Section */}
-      <WhyChooseUs />
+      <WhyChooseUs onOpenTrial={() => setTrialModalOpen(true)} />
+
+      {/* Book Your Free Trial Section */}
+      <BookTrialSection />
 
       {/* Classes & Schedule Section */}
       <ClassesAndSchedule onOpenVideo={handleOpenVideo} />
@@ -115,6 +121,11 @@ export default function App() {
         videoUrl={videoModalData.videoUrl}
         title={videoModalData.title}
         onClose={handleCloseVideo}
+      />
+
+      <BookTrialModal
+        isOpen={trialModalOpen}
+        onClose={() => setTrialModalOpen(false)}
       />
 
       <AuthModal
