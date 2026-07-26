@@ -63,7 +63,7 @@ export const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="text-xs font-black uppercase tracking-wider text-white">Direct Phone Support</h4>
-                  <p className="text-xs text-white/60 mt-0.5">+1 (800) 555-APEX (2739)</p>
+                  <p className="text-xs text-white/60 mt-0.5">+1 (800) 555-XCLUSIVE (9258)</p>
                 </div>
               </div>
 
@@ -73,7 +73,7 @@ export const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="text-xs font-black uppercase tracking-wider text-white">Official Email</h4>
-                  <p className="text-xs text-white/60 mt-0.5">info@apexgymfitness.com</p>
+                  <p className="text-xs text-white/60 mt-0.5">info@xclusivegymfitness.com</p>
                 </div>
               </div>
             </div>
@@ -89,7 +89,7 @@ export const ContactSection = () => {
                   </div>
                   <h3 className="text-2xl font-black italic uppercase text-white">Inquiry Transmitted</h3>
                   <p className="text-xs text-white/60 max-w-md mx-auto leading-relaxed">
-                    Thank you for connecting with Apex Gym. An athlete relations advisor will reach out to <span className="text-[#D4AF37] font-semibold">{email}</span> within 24 hours.
+                    Thank you for connecting with Xclusive Gym. An athlete relations advisor will reach out to <span className="text-[#D4AF37] font-semibold">{email}</span> within 24 hours.
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}

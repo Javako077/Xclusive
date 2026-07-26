@@ -29,7 +29,7 @@ export const HERO_VIDEOS = [
 export const CLASSES_DATA = [
   {
     id: 'cls-1',
-    name: 'Apex Power Hour',
+    name: 'Xclusive Power Hour',
     category: 'Strength',
     trainer: 'Marcus Vance',
     trainerAvatar: 'https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&q=80&w=400',
@@ -231,7 +231,7 @@ export const FACILITIES_DATA = [
 export const MEMBERSHIP_PLANS = [
   {
     id: 'plan-basic',
-    name: 'Apex Club Access',
+    name: 'Xclusive Club Access',
     tagline: 'For independent trainers and casual fitness enthusiasts.',
     priceMonthly: 49,
     priceAnnual: 39,
@@ -239,14 +239,14 @@ export const MEMBERSHIP_PLANS = [
       'Full Gym Floor & Cardio Equipment',
       'Locker Room & Steam Shower Access',
       'Free Fitness Orientation Session',
-      'Apex Mobile App Workout Logging',
+      'Xclusive Mobile App Workout Logging',
       'Standard Operating Hours (5 AM - 11 PM)',
     ],
     accessHours: '5:00 AM - 11:00 PM',
   },
   {
     id: 'plan-pro',
-    name: 'Apex Pro Athlete',
+    name: 'Xclusive Pro Athlete',
     badge: 'MOST POPULAR',
     tagline: 'Unlimited class access, recovery suite, and trainer perks.',
     priceMonthly: 89,
@@ -382,10 +382,10 @@ export const TRANSFORMATIONS_DATA = [
     durationWeeks: 16,
     weightChange: '-32 lbs Fat',
     bodyFatChange: '26% -> 12% Body Fat',
-    quote: "The combination of Marcus's strength program and Apex's recovery saunas completely changed my energy levels and confidence.",
+    quote: "The combination of strength programming and Xclusive's recovery saunas completely changed my energy levels and confidence.",
     beforeImage: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=600&blur=2',
     afterImage: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=600',
-    programUsed: 'Apex Pro Athlete + Custom Macros',
+    programUsed: 'Xclusive Pro Athlete + Custom Macros',
   },
   {
     id: 'tf-2',
@@ -395,7 +395,7 @@ export const TRANSFORMATIONS_DATA = [
     durationWeeks: 12,
     weightChange: '+14 lbs Lean Muscle',
     bodyFatChange: 'Improved Posture & 2x Deadlift',
-    quote: 'I used to feel intimidated by gym lifting floors. Apex trainers gave me structured form guidance and a supportive community.',
+    quote: 'I used to feel intimidated by gym lifting floors. Xclusive trainers gave me structured form guidance and a supportive community.',
     beforeImage: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=600&blur=2',
     afterImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600',
     programUsed: 'Metabolic Velocity & Power Hour',

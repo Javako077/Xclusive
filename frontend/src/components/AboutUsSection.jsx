@@ -39,14 +39,14 @@ export const AboutUsSection = () => {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-block mb-3">
             <span className="text-[#D4AF37] text-xs font-bold tracking-[0.3em] uppercase border-l-2 border-[#D4AF37] pl-3 flex items-center gap-2">
-              <Trophy className="w-4 h-4" /> The Apex Standard
+              <Trophy className="w-4 h-4" /> The Xclusive Standard
             </span>
           </div>
           <h2 className="text-4xl sm:text-6xl font-black italic tracking-tighter uppercase mb-4">
             REDEFINING <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059]">ATHLETIC EXCELLENCE.</span>
           </h2>
           <p className="text-white/60 text-base sm:text-lg font-light leading-relaxed">
-            Apex Athletic Lab was built with a singular vision: to destroy generic, commercial gym mediocrity and replace it with a world-class training ground for serious athletes and dedicated fitness seekers.
+            Xclusive Athletic Lab was built with a singular vision: to destroy generic, commercial gym mediocrity and replace it with a world-class training ground for serious athletes and dedicated fitness seekers.
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export const AboutUsSection = () => {
               WHERE SCIENCE MEETS UNYIELDING IRON.
             </h3>
             <p className="text-white/70 text-sm leading-relaxed">
-              Established in 2020 by former Olympic powerlifters and biomechanics researchers, Apex Athletic Lab combines high-density barbell platforms, advanced velocity-based training sensors, and sport-specific conditioning zones.
+              Established in 2020 by former Olympic powerlifters and biomechanics researchers, Xclusive Athletic Lab combines high-density barbell platforms, advanced velocity-based training sensors, and sport-specific conditioning zones.
             </p>
             <p className="text-white/70 text-sm leading-relaxed">
               We eliminate clutter and crowds to give every member uninterrupted access to competition-grade equipment, tailored sports nutrition programming, and 24/7 keycard entry.
@@ -80,7 +80,7 @@ export const AboutUsSection = () => {
             <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl group">
               <img
                 src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1200"
-                alt="Apex Gym High Performance Facility"
+                alt="Xclusive Gym High Performance Facility"
                 className="w-full h-[450px] object-cover group-hover:scale-105 transition-transform duration-700"
                 referrerPolicy="no-referrer"
               />

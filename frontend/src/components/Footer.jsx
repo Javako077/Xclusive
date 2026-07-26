@@ -26,11 +26,11 @@ export const Footer = () => {
                 />
               </div>
               <div className="flex flex-col leading-none">
-                <span className="text-2xl sm:text-3xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059]">
+                <span className="text-2xl sm:text-3xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] drop-shadow-[0_2px_4px_#000000]">
                   XCLUSIVE
                 </span>
-                <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.25em] text-white/60 uppercase mt-1">
-                  GYM & WELLNESS
+                <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.2em] text-[#F5D76E]/90 uppercase mt-1">
+                  WHERE FITNESS BECOMES A LIFESTYLE
                 </span>
               </div>
             </a>
@@ -85,11 +85,11 @@ export const Footer = () => {
               </p>
               <p className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-white/40 shrink-0" />
-                <span>+1 (800) 555-APEX (2739)</span>
+                <span>+1 (800) 555-XCLUSIVE (9258)</span>
               </p>
               <p className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-white/40 shrink-0" />
-                <span>info@apexgymfitness.com</span>
+                <span>info@xclusivegymfitness.com</span>
               </p>
             </div>
           </div>
@@ -128,7 +128,7 @@ export const Footer = () => {
 
         {/* Bottom copyright */}
         <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-white/40 gap-4">
-          <div>© {new Date().getFullYear()} Apex Gym & Athletic Performance Center. All rights reserved.</div>
+          <div>© {new Date().getFullYear()} Xclusive Gym & Athletic Performance Center. All rights reserved.</div>
           <div className="flex items-center gap-6">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>

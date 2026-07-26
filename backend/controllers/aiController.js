@@ -19,7 +19,7 @@ function getAiClient() {
   return ai;
 }
 
-// @desc    Ask APEX AI Coach for workout/nutrition recommendations
+// @desc    Ask Xclusive AI Coach for workout/nutrition recommendations
 // @route   POST /api/ai/coach
 // @access  Public
 export const askAiCoach = async (req, res) => {
@@ -33,7 +33,7 @@ export const askAiCoach = async (req, res) => {
 
     const aiClient = getAiClient();
 
-    const systemInstruction = `You are APEX AI Coach, an elite strength & conditioning specialist, exercise physiologist, and sports nutritionist at APEX Athletic Lab.
+    const systemInstruction = `You are Xclusive AI Coach, an elite strength & conditioning specialist, exercise physiologist, and sports nutritionist at Xclusive Athletic Lab.
 Provide motivating, scientifically grounded, actionable, and structured advice for workout plans, nutrition, macro calculations, exercise form, recovery protocols, and performance metrics.
 Format your responses cleanly using Markdown (headers, bullet points, bold text). Maintain an energetic, athletic, elite, and high-performance tone.`;
 
@@ -53,12 +53,12 @@ ${prompt}`;
       },
     });
 
-    const reply = response.text || "No output produced from APEX AI.";
+    const reply = response.text || "No output produced from Xclusive AI.";
     res.json({ reply });
   } catch (err) {
     console.error("[AI Coach Controller Error]", err);
     res.status(500).json({
-      error: err?.message || "Failed to communicate with APEX AI Coach.",
+      error: err?.message || "Failed to communicate with Xclusive AI Coach.",
     });
   }
 };

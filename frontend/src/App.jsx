@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { AboutUsSection } from './components/AboutUsSection';
+import { WhyChooseUs } from './components/WhyChooseUs';
 import { ClassesAndSchedule } from './components/ClassesAndSchedule';
 import { FacilityShowcase } from './components/FacilityShowcase';
+import { TestimonialsSection } from './components/TestimonialsSection';
 import { MembershipCalculator } from './components/MembershipCalculator';
 import { ContactSection } from './components/ContactSection';
 import { VideoModal } from './components/VideoModal';
@@ -86,11 +88,17 @@ export default function App() {
       {/* About Us Section */}
       <AboutUsSection />
 
+      {/* Why Choose Us Section */}
+      <WhyChooseUs />
+
       {/* Classes & Schedule Section */}
       <ClassesAndSchedule onOpenVideo={handleOpenVideo} />
 
       {/* Facility Showcase */}
       <FacilityShowcase onOpenVideo={handleOpenVideo} />
+
+      {/* Testimonials / Client Feedback Section */}
+      <TestimonialsSection />
 
       {/* Membership Pricing & Custom Builder */}
       <MembershipCalculator onOpenAuth={() => setAuthModalOpen(true)} />

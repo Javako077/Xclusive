@@ -24,8 +24,10 @@ export const Navbar = ({
   const navLinks = [
     { name: 'Home', href: '#hero' },
     { name: 'About', href: '#about' },
+    { name: 'Why Us', href: '#why-us' },
     { name: 'Classes', href: '#classes' },
     { name: 'Facilities', href: '#facilities' },
+    { name: 'Testimonials', href: '#testimonials' },
     { name: 'Memberships', href: '#memberships' },
     { name: 'Contact', href: '#contact' },
   ];
@@ -41,7 +43,7 @@ export const Navbar = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
         <a href="#hero" className="flex items-center gap-3 group shrink-0 py-1">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-zinc-950 border-2 border-[#D4AF37] p-1.5 flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.4)] group-hover:shadow-[0_0_25px_rgba(255,215,0,0.7)] group-hover:border-[#FFD700] group-hover:scale-105 transition-all duration-300 overflow-hidden shrink-0">
+          <div className="w-10 h-10 sm:w-10 sm:h-10 lg:w-10 lg:h-10 rounded-full bg-zinc-950 border-2 border-[#D4AF37] p-1.5 flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.4)] group-hover:shadow-[0_0_25px_rgba(255,215,0,0.7)] group-hover:border-[#FFD700] group-hover:scale-105 transition-all duration-300 overflow-hidden shrink-0">
             <img
               src="/Xclusivelogo.png"
               alt="Xclusive Gym & Wellness"
@@ -49,11 +51,11 @@ export const Navbar = ({
             />
           </div>
           <div className="flex flex-col leading-none">
-            <span className="text-xl sm:text-2xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059]">
+            <span className="text-xl sm:text-2xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] drop-shadow-[0_2px_4px_#000000]">
               XCLUSIVE
             </span>
-            <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.25em] text-white/60 uppercase mt-0.5">
-              GYM & WELLNESS
+            <span className="text-[8px] sm:text-[9px] font-bold tracking-[0.2em] text-[#F5D76E]/90 uppercase mt-0.5">
+              WHERE FITNESS BECOMES A LIFESTYLE
             </span>
           </div>
         </a>

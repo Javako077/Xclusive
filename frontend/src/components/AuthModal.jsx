@@ -62,7 +62,7 @@ export const AuthModal = ({
       const userProfile = {
         id: 'usr_social_' + Math.random().toString(36).substring(2, 9),
         name: `Athlete (${provider})`,
-        email: `athlete.${provider.toLowerCase()}@apexgym.com`,
+        email: `athlete.${provider.toLowerCase()}@xclusivegym.com`,
         membershipPlan: 'PRO ATHLETE PASS',
         joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
         savedPlans: [],
