@@ -85,6 +85,32 @@ export const apiService = {
     return result.reply;
   },
 
+  // Booking & Concurrency APIs
+  async getSlotAvailability(date) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/bookings/availability?date=${date || ''}`, {
+        headers: getHeaders(),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
+    }
+  },
+
+  async createBooking(data) {
+    const res = await fetch(`${API_BASE_URL}/api/bookings/book`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || "Booking failed due to overbooking protection.");
+    }
+    return result;
+  },
+
   // Logout utility
   logout() {
     localStorage.removeItem("token");

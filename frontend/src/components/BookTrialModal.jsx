@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Calendar, Clock, User, Mail, Phone, Sparkles, CheckCircle2, ArrowRight, ShieldCheck, CreditCard } from 'lucide-react';
+import { apiService } from '../services/api';
 
 const INITIAL_10_SLOTS = [
   // Morning Slots (5:00 AM - 10:00 AM)
@@ -30,27 +31,34 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!preferredTime) return;
 
-    // Check if slot is full
-    const targetSlot = slots.find((s) => s.time === preferredTime);
-    if (targetSlot && targetSlot.booked >= targetSlot.max) {
-      alert('This slot is currently FULL (4/4 persons booked). Please select an available slot.');
-      return;
-    }
-
     setLoading(true);
+    try {
+      // Backend Double Check At Booking Instant
+      const res = await apiService.createBooking({
+        fullName,
+        email,
+        phone,
+        date: preferredDate || new Date().toISOString().split('T')[0],
+        slotTime: preferredTime,
+        bookingType: 'trial',
+        planName: 'Trial Pass (₹2,000)',
+      });
 
-    setTimeout(() => {
-      // Increment booked count for the selected slot
-      setSlots((prev) =>
-        prev.map((s) => (s.time === preferredTime ? { ...s, booked: s.booked + 1 } : s))
-      );
-      setLoading(false);
+      if (res.slotStatus) {
+        setSlots((prev) =>
+          prev.map((s) => (s.time === preferredTime ? { ...s, booked: res.slotStatus.booked } : s))
+        );
+      }
       setSubmitted(true);
-    }, 800);
+    } catch (err) {
+      alert(err.message || 'Slot overbooking prevented by backend concurrency check.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReset = () => {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, ShieldCheck, CreditCard, User, Mail, Phone, Lock, Sparkles, ArrowRight, ArrowLeft, Clock, Calendar } from 'lucide-react';
+import { apiService } from '../services/api';
 
 const INITIAL_10_SLOTS = [
   // Morning Slots (5:00 AM - 10:00 AM)
@@ -52,19 +53,35 @@ export const CheckoutModal = ({ isOpen, onClose, selectedPlan }) => {
     setStep(2);
   };
 
-  const handlePaymentSubmit = (e) => {
+  const handlePaymentSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      // Increment booked count for chosen slot
-      setSlots((prev) =>
-        prev.map((s) => (s.time === selectedSlotTime ? { ...s, booked: s.booked + 1 } : s))
-      );
-      setLoading(false);
+    try {
+      // Backend Atomic Concurrency Verification
+      const res = await apiService.createBooking({
+        fullName,
+        email,
+        phone,
+        date: startDate || new Date().toISOString().split('T')[0],
+        slotTime: selectedSlotTime,
+        bookingType: 'membership',
+        planName: selectedPlan.name,
+      });
+
+      if (res.slotStatus) {
+        setSlots((prev) =>
+          prev.map((s) => (s.time === selectedSlotTime ? { ...s, booked: res.slotStatus.booked } : s))
+        );
+      }
+
       setConfirmationId(`XCL-${Math.floor(100000 + Math.random() * 900000)}`);
       setStep(3);
-    }, 1200);
+    } catch (err) {
+      alert(err.message || 'Slot overbooking prevented by backend concurrency check. Please select an available slot.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFinish = () => {
