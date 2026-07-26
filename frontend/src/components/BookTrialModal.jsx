@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
-import { X, Calendar, Clock, User, Mail, Phone, Sparkles, CheckCircle2, ArrowRight, ShieldCheck, CreditCard } from 'lucide-react';
+import { X, Calendar, Clock, User, Mail, Phone, Sparkles, CheckCircle2, ArrowRight, ShieldCheck, CreditCard, AlertCircle } from 'lucide-react';
+
+const INITIAL_SLOTS = [
+  { time: '07:00 AM', max: 4, booked: 2 },
+  { time: '09:00 AM', max: 4, booked: 4 }, // FULL
+  { time: '11:00 AM', max: 4, booked: 1 },
+  { time: '02:00 PM', max: 4, booked: 3 },
+  { time: '05:00 PM', max: 4, booked: 4 }, // FULL
+  { time: '07:00 PM', max: 4, booked: 0 },
+];
 
 export const BookTrialModal = ({ isOpen, onClose }) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [preferredDate, setPreferredDate] = useState('');
-  const [preferredTime, setPreferredTime] = useState('10:00 AM');
+  const [preferredTime, setPreferredTime] = useState('07:00 AM');
 
+  // Slot capacity state (Max 4 persons per slot)
+  const [slots, setSlots] = useState(INITIAL_SLOTS);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -15,9 +26,22 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!preferredTime) return;
+
+    // Check if slot is full
+    const targetSlot = slots.find((s) => s.time === preferredTime);
+    if (targetSlot && targetSlot.booked >= targetSlot.max) {
+      alert('This slot is currently FULL (4/4 persons booked). Please select an available slot.');
+      return;
+    }
+
     setLoading(true);
 
     setTimeout(() => {
+      // Increment booked count for the selected slot
+      setSlots((prev) =>
+        prev.map((s) => (s.time === preferredTime ? { ...s, booked: s.booked + 1 } : s))
+      );
       setLoading(false);
       setSubmitted(true);
     }, 800);
@@ -29,7 +53,7 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
     setEmail('');
     setPhone('');
     setPreferredDate('');
-    setPreferredTime('10:00 AM');
+    setPreferredTime('07:00 AM');
     onClose();
   };
 
@@ -79,7 +103,7 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
                 BOOK YOUR <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16]">TRIAL</span>
               </h2>
               <p className="text-xs text-white/50 mt-1">
-                Experience our world-class facilities and expert athletic assessment.
+                Max 4 Persons Per Slot • Real-Time Slot Capacity
               </p>
             </div>
 
@@ -148,43 +172,74 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Preferred Date & Preferred Time */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-white/70 mb-1.5">
-                    Preferred Date <span className="text-[#D4AF37]">*</span>
+              {/* Preferred Date */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-white/70 mb-1.5">
+                  Preferred Date <span className="text-[#D4AF37]">*</span>
+                </label>
+                <div className="relative">
+                  <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
+                  <input
+                    type="date"
+                    required
+                    value={preferredDate}
+                    onChange={(e) => setPreferredDate(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37] cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              {/* Preferred Time Slots (4 Persons Max Per Slot) */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-white/70 flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-[#D4AF37]" /> Preferred Time Slot (Max 4 Persons / Slot) <span className="text-[#D4AF37]">*</span>
                   </label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
-                    <input
-                      type="date"
-                      required
-                      value={preferredDate}
-                      onChange={(e) => setPreferredDate(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37] cursor-pointer"
-                    />
-                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-white/70 mb-1.5">
-                    Preferred Time <span className="text-[#D4AF37]">*</span>
-                  </label>
-                  <div className="relative">
-                    <Clock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
-                    <select
-                      value={preferredTime}
-                      onChange={(e) => setPreferredTime(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37] cursor-pointer"
-                    >
-                      <option value="07:00 AM">07:00 AM</option>
-                      <option value="09:00 AM">09:00 AM</option>
-                      <option value="11:00 AM">11:00 AM</option>
-                      <option value="02:00 PM">02:00 PM</option>
-                      <option value="05:00 PM">05:00 PM</option>
-                      <option value="07:00 PM">07:00 PM</option>
-                    </select>
-                  </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {slots.map((s) => {
+                    const isFull = s.booked >= s.max;
+                    const availableSpots = s.max - s.booked;
+                    const isSelected = preferredTime === s.time && !isFull;
+
+                    return (
+                      <button
+                        type="button"
+                        key={s.time}
+                        disabled={isFull}
+                        onClick={() => setPreferredTime(s.time)}
+                        className={`p-3 rounded-xl border text-left transition-all relative flex flex-col justify-between ${
+                          isFull
+                            ? 'bg-red-950/20 border-red-500/30 text-red-400 opacity-50 cursor-not-allowed'
+                            : isSelected
+                            ? 'bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black border-[#F5D76E] font-bold shadow-lg cursor-pointer'
+                            : 'bg-black border-white/10 text-white/80 hover:border-white/30 cursor-pointer'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-black uppercase tracking-wider">{s.time}</span>
+                          {isFull ? (
+                            <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/40">
+                              FULL
+                            </span>
+                          ) : (
+                            <span
+                              className={`text-[9px] font-bold ${
+                                isSelected ? 'text-black/80' : 'text-[#D4AF37]'
+                              }`}
+                            >
+                              {availableSpots} Left
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="mt-1 text-[10px] opacity-75">
+                          {isFull ? '4/4 Persons Booked' : `${s.booked}/4 Persons Booked`}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
