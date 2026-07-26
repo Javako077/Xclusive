@@ -23,20 +23,20 @@ export const UserProfileModal = ({
 
         {/* User Header */}
         <div className="flex items-center gap-4 mb-8 pb-6 border-b border-white/10">
-          <div className="w-16 h-16 rounded-2xl bg-[#B9FF00] text-black font-black text-2xl flex items-center justify-center shadow-lg shadow-[#B9FF00]/20">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-black font-black text-2xl flex items-center justify-center shadow-lg shadow-[#D4AF37]/20">
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-2xl font-black italic uppercase text-white">{user.name}</h3>
-              <span className="px-2.5 py-0.5 rounded-full bg-[#B9FF00]/10 border border-[#B9FF00] text-[#B9FF00] text-[9px] font-black uppercase tracking-widest">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37] text-[#D4AF37] text-[9px] font-black uppercase tracking-widest">
                 VERIFIED ATHLETE
               </span>
             </div>
             <p className="text-xs text-white/50">{user.email}</p>
             <div className="flex items-center gap-3 mt-2 text-[10px] text-white/40 uppercase tracking-wider font-bold">
               <span className="flex items-center gap-1">
-                <Award className="w-3.5 h-3.5 text-[#B9FF00]" /> {user.membershipPlan || 'VIP PRO PASS'}
+                <Award className="w-3.5 h-3.5 text-[#D4AF37]" /> {user.membershipPlan || 'VIP PRO PASS'}
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
@@ -46,11 +46,11 @@ export const UserProfileModal = ({
           </div>
         </div>
 
-        {/* Saved AI Workout Plans */}
+        {/* Saved Workout Plans */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-sm font-black italic uppercase text-white flex items-center gap-2">
-              <Bookmark className="w-4 h-4 text-[#B9FF00]" /> Saved AI Workout & Nutrition Plans
+              <Bookmark className="w-4 h-4 text-[#D4AF37]" /> Saved Workout & Nutrition Plans
             </h4>
             <span className="text-xs text-white/40 font-bold">{user.savedPlans?.length || 0} Saved</span>
           </div>
@@ -59,7 +59,7 @@ export const UserProfileModal = ({
             <div className="p-6 rounded-2xl bg-black border border-white/5 text-center">
               <p className="text-xs text-white/40 mb-2">No saved plans yet.</p>
               <p className="text-[11px] text-white/30">
-                Generate a routine with <span className="text-[#B9FF00]">APEX AI Coach</span> and click "Save Plan" to store it here.
+                Save custom workout & nutrition plans to store them here.
               </p>
             </div>
           ) : (
@@ -91,7 +91,7 @@ export const UserProfileModal = ({
         {/* Footer Actions */}
         <div className="pt-6 border-t border-white/10 flex items-center justify-between">
           <div className="text-xs text-white/40">
-            24/7 Facility Keycard: <span className="text-[#B9FF00] font-bold">ACTIVE</span>
+            24/7 Facility Keycard: <span className="text-[#D4AF37] font-bold">ACTIVE</span>
           </div>
           <button
             onClick={() => {

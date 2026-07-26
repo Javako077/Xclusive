@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Dumbbell, Menu, X, Flame, ChevronRight, Play, User } from 'lucide-react';
+import { Dumbbell, Menu, X, ChevronRight, User } from 'lucide-react';
 
 export const Navbar = ({
-  onOpenFreePass,
-  onOpenVirtualTour,
   user,
   onOpenAuth,
   onOpenProfile,
@@ -28,10 +26,7 @@ export const Navbar = ({
     { name: 'About', href: '#about' },
     { name: 'Classes', href: '#classes' },
     { name: 'Facilities', href: '#facilities' },
-    { name: 'Coaches', href: '#trainers' },
-    { name: 'AI Coach', href: '#ai-coach', badge: 'AI' },
     { name: 'Memberships', href: '#memberships' },
-    { name: 'Calculators', href: '#calculators' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -45,18 +40,12 @@ export const Navbar = ({
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
-        <a href="#hero" className="flex items-center gap-2.5 group shrink-0">
-          <div className="w-10 h-10 rounded-xl bg-[#B9FF00] flex items-center justify-center text-black font-black shadow-lg shadow-[#B9FF00]/20 group-hover:scale-105 transition-transform">
-            <Dumbbell className="w-5 h-5 -rotate-45" />
-          </div>
-          <div>
-            <div className="text-xl font-black italic tracking-tighter text-white flex items-center">
-              APEX<span className="text-[#B9FF00] ml-0.5">.</span>
-            </div>
-            <div className="text-[9px] font-bold text-white/40 tracking-[0.25em] uppercase -mt-1">
-              Athletic Lab
-            </div>
-          </div>
+        <a href="#hero" className="flex items-center group shrink-0 py-1">
+          <img
+            src="/Xclusivelogo.png"
+            alt="Xclusive Gym & Wellness"
+            className="h-10 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform"
+          />
         </a>
 
         {/* Desktop Nav Links */}
@@ -69,38 +58,24 @@ export const Navbar = ({
             >
               {link.name}
               {link.badge && (
-                <span className="px-1.5 py-0.2 rounded bg-[#B9FF00] text-black text-[8px] font-black uppercase">
+                <span className="px-1.5 py-0.2 rounded bg-[#D4AF37] text-black text-[8px] font-black uppercase">
                   {link.badge}
                 </span>
               )}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#B9FF00] transition-all duration-300 group-hover:w-full" />
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
         </nav>
 
         {/* Action Buttons */}
         <div className="hidden lg:flex items-center gap-3">
-          <button
-            onClick={onOpenVirtualTour}
-            className="px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-white/80 bg-white/5 border border-white/10 hover:bg-white hover:text-black transition-all flex items-center gap-1.5 cursor-pointer"
-          >
-            <Play className="w-3.5 h-3.5 text-[#B9FF00] fill-[#B9FF00]" /> Tour
-          </button>
-
-          <button
-            onClick={onOpenFreePass}
-            className="px-4 py-2.5 rounded-none font-black text-xs uppercase tracking-widest bg-[#B9FF00] text-black hover:scale-105 transition-transform shadow-lg shadow-[#B9FF00]/20 flex items-center gap-1.5 cursor-pointer"
-          >
-            <Flame className="w-4 h-4 fill-black" /> Free Pass
-          </button>
-
           {/* User Auth or Profile Button */}
           {user ? (
             <button
               onClick={onOpenProfile}
-              className="px-3.5 py-2 rounded-full bg-zinc-900 border border-[#B9FF00]/40 text-xs font-bold text-white hover:border-[#B9FF00] transition-all flex items-center gap-2 cursor-pointer"
+              className="px-3.5 py-2 rounded-full bg-zinc-900 border border-[#D4AF37]/40 text-xs font-bold text-white hover:border-[#D4AF37] transition-all flex items-center gap-2 cursor-pointer"
             >
-              <div className="w-6 h-6 rounded-full bg-[#B9FF00] text-black text-xs font-black flex items-center justify-center">
+              <div className="w-6 h-6 rounded-full bg-[#D4AF37] text-black text-xs font-black flex items-center justify-center">
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <span className="max-w-[100px] truncate">{user.name}</span>
@@ -108,7 +83,7 @@ export const Navbar = ({
           ) : (
             <button
               onClick={onOpenAuth}
-              className="px-4 py-2 rounded-full bg-black border border-white/20 text-xs font-bold uppercase tracking-wider text-white hover:border-[#B9FF00] hover:text-[#B9FF00] transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-5 py-2 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059] text-black font-black text-xs uppercase tracking-wider hover:opacity-90 transition-all flex items-center gap-1.5 cursor-pointer shadow-lg shadow-[#D4AF37]/20"
             >
               <User className="w-3.5 h-3.5" /> Log In
             </button>
@@ -120,14 +95,14 @@ export const Navbar = ({
           {user ? (
             <button
               onClick={onOpenProfile}
-              className="px-3 py-1.5 rounded-full bg-[#B9FF00] text-black font-black text-xs uppercase tracking-wider cursor-pointer"
+              className="px-3 py-1.5 rounded-full bg-[#D4AF37] text-black font-black text-xs uppercase tracking-wider cursor-pointer"
             >
               {user.name.split(' ')[0]}
             </button>
           ) : (
             <button
               onClick={onOpenAuth}
-              className="px-3 py-1.5 rounded-full border border-white/20 text-xs font-bold uppercase tracking-wider text-white cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-[#D4AF37] text-black font-black text-xs uppercase tracking-wider cursor-pointer"
             >
               Log In
             </button>
@@ -135,7 +110,7 @@ export const Navbar = ({
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2.5 rounded-xl bg-zinc-900 border border-white/10 text-white hover:text-[#B9FF00] focus:outline-none cursor-pointer"
+            className="p-2.5 rounded-xl bg-zinc-900 border border-white/10 text-white hover:text-[#D4AF37] focus:outline-none cursor-pointer"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -152,12 +127,12 @@ export const Navbar = ({
                 key={link.name}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-4 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider text-white/80 hover:bg-white/5 hover:text-[#B9FF00] transition-colors flex items-center justify-between"
+                className="px-4 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider text-white/80 hover:bg-white/5 hover:text-[#D4AF37] transition-colors flex items-center justify-between"
               >
                 <div className="flex items-center gap-2">
                   <span>{link.name}</span>
                   {link.badge && (
-                    <span className="px-1.5 py-0.2 bg-[#B9FF00] text-black text-[9px] font-black rounded">
+                    <span className="px-1.5 py-0.2 bg-[#D4AF37] text-black text-[9px] font-black rounded">
                       {link.badge}
                     </span>
                   )}
@@ -174,7 +149,7 @@ export const Navbar = ({
                   setMobileMenuOpen(false);
                   onOpenAuth();
                 }}
-                className="w-full py-3 rounded-none bg-black border border-white/20 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-none bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-black font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
               >
                 <User className="w-4 h-4" /> Athlete Login / Sign Up
               </button>
@@ -184,24 +159,15 @@ export const Navbar = ({
                   setMobileMenuOpen(false);
                   onOpenProfile();
                 }}
-                className="w-full py-3 rounded-none bg-zinc-900 border border-[#B9FF00] text-[#B9FF00] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-none bg-zinc-900 border border-[#D4AF37] text-[#D4AF37] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
               >
                 <User className="w-4 h-4" /> My Athlete Profile
               </button>
             )}
-
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenFreePass();
-              }}
-              className="w-full py-3 rounded-none bg-[#B9FF00] text-black font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-[#B9FF00]/20"
-            >
-              <Flame className="w-4 h-4 fill-black" /> Claim 3-Day Free Pass
-            </button>
           </div>
         </div>
       )}
     </header>
   );
 };
+

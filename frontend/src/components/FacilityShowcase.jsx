@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { FACILITIES_DATA } from '../data/gymData';
-import { Building2, Play, CheckCircle2, Shield, Layers, ArrowRight } from 'lucide-react';
+import { Building2, Play, CheckCircle2, Shield, Layers } from 'lucide-react';
 
-export const FacilityShowcase = ({ onOpenVideo, onOpenVirtualTour }) => {
+export const FacilityShowcase = ({ onOpenVideo }) => {
   const [activeZone, setActiveZone] = useState(FACILITIES_DATA[0]);
 
   return (
@@ -20,13 +20,6 @@ export const FacilityShowcase = ({ onOpenVideo, onOpenVirtualTour }) => {
               WORLD-CLASS <span className="text-[#B9FF00]">ZONES.</span>
             </h2>
           </div>
-
-          <button
-            onClick={onOpenVirtualTour}
-            className="px-6 py-3.5 bg-[#B9FF00] text-black font-black text-xs uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-2 shrink-0 cursor-pointer shadow-xl shadow-[#B9FF00]/10"
-          >
-            <Play className="w-4 h-4 fill-black" /> Full 3D Virtual Tour <ArrowRight className="w-4 h-4" />
-          </button>
         </div>
 
         {/* Zone Selector Buttons */}

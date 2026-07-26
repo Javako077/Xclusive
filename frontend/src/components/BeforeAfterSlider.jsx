@@ -54,7 +54,7 @@ export const BeforeAfterSlider = () => {
             ATHLETE <span className="text-[#B9FF00]">TRANSFORMATIONS.</span>
           </h2>
           <p className="text-white/50 text-base sm:text-lg font-light">
-            Drag the slider to reveal verified before and after physical progress achieved with our master coaches.
+            Drag the slider to reveal verified before and after physical progress achieved at Apex Athletic Lab.
           </p>
         </div>
 

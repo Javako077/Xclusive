@@ -85,11 +85,13 @@ export const AuthModal = ({
 
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#B9FF00] text-black font-black mb-3">
-            <Dumbbell className="w-6 h-6 -rotate-45" />
-          </div>
+          <img
+            src="/Xclusivelogo.png"
+            alt="Xclusive Gym"
+            className="h-12 w-auto object-contain mx-auto mb-3"
+          />
           <h3 className="text-2xl font-black italic uppercase tracking-tight text-white">
-            APEX <span className="text-[#B9FF00]">ATHLETE PORTAL</span>
+            XCLUSIVE <span className="text-[#D4AF37]">ATHLETE PORTAL</span>
           </h3>
           <p className="text-xs text-white/50 mt-1">
             {tab === 'login' ? 'Access your training plans & membership' : 'Join the elite athletic performance community'}
@@ -104,7 +106,7 @@ export const AuthModal = ({
               setErrorMsg(null);
             }}
             className={`py-2 text-xs font-black uppercase tracking-widest transition-all rounded-lg cursor-pointer ${
-              tab === 'login' ? 'bg-[#B9FF00] text-black shadow' : 'text-white/40 hover:text-white'
+              tab === 'login' ? 'bg-[#D4AF37] text-black shadow' : 'text-white/40 hover:text-white'
             }`}
           >
             Log In
@@ -115,7 +117,7 @@ export const AuthModal = ({
               setErrorMsg(null);
             }}
             className={`py-2 text-xs font-black uppercase tracking-widest transition-all rounded-lg cursor-pointer ${
-              tab === 'signup' ? 'bg-[#B9FF00] text-black shadow' : 'text-white/40 hover:text-white'
+              tab === 'signup' ? 'bg-[#D4AF37] text-black shadow' : 'text-white/40 hover:text-white'
             }`}
           >
             Sign Up
@@ -141,7 +143,7 @@ export const AuthModal = ({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Alex Mercer"
-                  className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#B9FF00]"
+                  className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
                 />
               </div>
             </div>
@@ -156,8 +158,8 @@ export const AuthModal = ({
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="athlete@apexgym.com"
-                className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#B9FF00]"
+                placeholder="athlete@xclusivegym.com"
+                className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
               />
             </div>
           </div>
@@ -172,7 +174,7 @@ export const AuthModal = ({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full pl-10 pr-10 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#B9FF00]"
+                className="w-full pl-10 pr-10 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
               />
               <button
                 type="button"
@@ -190,7 +192,7 @@ export const AuthModal = ({
               <select
                 value={goal}
                 onChange={(e) => setGoal(e.target.value)}
-                className="w-full px-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#B9FF00] cursor-pointer"
+                className="w-full px-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37] cursor-pointer"
               >
                 <option value="Muscle Building & Hypertrophy">Muscle Building & Hypertrophy</option>
                 <option value="Fat Loss & Conditioning">Fat Loss & Conditioning</option>
@@ -204,10 +206,10 @@ export const AuthModal = ({
           {tab === 'login' && (
             <div className="flex items-center justify-between text-xs text-white/50">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" defaultChecked className="accent-[#B9FF00] rounded" />
+                <input type="checkbox" defaultChecked className="accent-[#D4AF37] rounded" />
                 <span>Remember me</span>
               </label>
-              <a href="#" onClick={(e) => { e.preventDefault(); alert('Reset link sent to your email.'); }} className="hover:text-[#B9FF00] transition-colors">
+              <a href="#" onClick={(e) => { e.preventDefault(); alert('Reset link sent to your email.'); }} className="hover:text-[#D4AF37] transition-colors">
                 Forgot Password?
               </a>
             </div>
@@ -216,7 +218,7 @@ export const AuthModal = ({
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-[#B9FF00] text-black font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#B9FF00]/10"
+            className="w-full py-3.5 bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/10"
           >
             {loading ? 'Processing...' : tab === 'login' ? 'Log In to Portal' : 'Create Athlete Account'}
             {!loading && <ArrowRight className="w-4 h-4" />}
@@ -249,7 +251,7 @@ export const AuthModal = ({
           </button>
           <button
             onClick={() => handleSocialAuth('Strava')}
-            className="py-2.5 bg-black border border-white/10 rounded-xl text-xs font-bold text-[#B9FF00] hover:border-[#B9FF00]/50 transition-all cursor-pointer"
+            className="py-2.5 bg-black border border-white/10 rounded-xl text-xs font-bold text-[#D4AF37] hover:border-[#D4AF37]/50 transition-all cursor-pointer"
           >
             Strava
           </button>

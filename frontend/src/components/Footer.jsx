@@ -17,27 +17,22 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-none bg-[#B9FF00] text-black flex items-center justify-center font-black">
-                <Dumbbell className="w-5 h-5 -rotate-45" />
-              </div>
-              <span className="text-xl font-black italic tracking-tighter text-white">
-                APEX <span className="text-[#B9FF00]">GYM</span>
-              </span>
-            </div>
+            <a href="#hero" className="inline-block">
+              <img src="/Xclusivelogo.png" alt="Xclusive Gym & Wellness" className="h-14 sm:h-16 w-auto object-contain" />
+            </a>
 
             <p className="text-xs text-white/50 leading-relaxed max-w-sm">
               The premier performance gym, Olympic lifting floor, and recovery suite designed for athletes, fitness enthusiasts, and beginners striving for peak physical conditioning.
             </p>
 
             <div className="flex items-center gap-3 pt-2">
-              <a href="#" className="p-2.5 rounded-full bg-zinc-950 border border-white/10 text-white/60 hover:text-[#B9FF00] hover:border-[#B9FF00] transition-all">
+              <a href="#" className="p-2.5 rounded-full bg-zinc-950 border border-white/10 text-white/60 hover:text-[#D4AF37] hover:border-[#D4AF37] transition-all">
                 <Instagram className="w-4 h-4" />
               </a>
-              <a href="#" className="p-2.5 rounded-full bg-zinc-950 border border-white/10 text-white/60 hover:text-[#B9FF00] hover:border-[#B9FF00] transition-all">
+              <a href="#" className="p-2.5 rounded-full bg-zinc-950 border border-white/10 text-white/60 hover:text-[#D4AF37] hover:border-[#D4AF37] transition-all">
                 <Youtube className="w-4 h-4" />
               </a>
-              <a href="#" className="p-2.5 rounded-full bg-zinc-950 border border-white/10 text-white/60 hover:text-[#B9FF00] hover:border-[#B9FF00] transition-all">
+              <a href="#" className="p-2.5 rounded-full bg-zinc-950 border border-white/10 text-white/60 hover:text-[#D4AF37] hover:border-[#D4AF37] transition-all">
                 <Twitter className="w-4 h-4" />
               </a>
             </div>
@@ -45,7 +40,7 @@ export const Footer = () => {
 
           {/* Quick Hours */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-[#B9FF00] flex items-center gap-1.5">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-[#D4AF37] flex items-center gap-1.5">
               <Clock className="w-4 h-4" /> Facility Hours
             </h4>
             <ul className="space-y-2 text-xs text-white/70">
@@ -59,14 +54,14 @@ export const Footer = () => {
               </li>
               <li className="flex justify-between">
                 <span className="text-white/40">VIP Pro Keycard:</span>
-                <span className="font-black text-[#B9FF00] italic">24 / 7 ACCESS</span>
+                <span className="font-black text-[#D4AF37] italic">24 / 7 ACCESS</span>
               </li>
             </ul>
           </div>
 
           {/* Location & Contact */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-[#B9FF00] flex items-center gap-1.5">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-[#D4AF37] flex items-center gap-1.5">
               <MapPin className="w-4 h-4" /> Location & Contact
             </h4>
             <div className="space-y-2 text-xs text-white/70">
@@ -87,7 +82,7 @@ export const Footer = () => {
 
           {/* Newsletter */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-[#B9FF00]">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-[#D4AF37]">
               Weekly Workout Tips
             </h4>
             <p className="text-xs text-white/50">Get free training guides & nutrition templates delivered weekly.</p>
@@ -100,18 +95,18 @@ export const Footer = () => {
                   placeholder="Enter email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-white/10 text-white text-xs focus:outline-none focus:border-[#B9FF00]"
+                  className="w-full px-3.5 py-2.5 rounded-none bg-zinc-950 border border-white/10 text-white text-xs focus:outline-none focus:border-[#D4AF37]"
                 />
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded-none bg-[#B9FF00] text-black font-black text-xs hover:scale-105 transition-all cursor-pointer flex items-center justify-center gap-1.5 uppercase tracking-widest"
+                  className="w-full py-2.5 rounded-none bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059] text-black font-black text-xs hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-1.5 uppercase tracking-widest"
                 >
                   <Send className="w-3.5 h-3.5" /> Subscribe
                 </button>
               </form>
             ) : (
-              <div className="p-3 rounded-none bg-[#B9FF00]/10 border border-[#B9FF00] text-[#B9FF00] text-xs font-bold uppercase tracking-wider">
-                ✓ Subscribed to Apex Weekly
+              <div className="p-3 rounded-none bg-[#D4AF37]/10 border border-[#D4AF37] text-[#D4AF37] text-xs font-bold uppercase tracking-wider">
+                ✓ Subscribed to Xclusive Weekly
               </div>
             )}
           </div>

@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { HERO_VIDEOS } from '../data/gymData';
 import { Play, Pause, Volume2, VolumeX, Shield, Zap, ArrowRight, Flame } from 'lucide-react';
 
-export const HeroSection = ({ onOpenFreePass, onOpenVirtualTour }) => {
+export const HeroSection = () => {
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
@@ -45,7 +45,7 @@ export const HeroSection = ({ onOpenFreePass, onOpenVirtualTour }) => {
         {/* Dark radial & linear overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/60" />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,#B9FF0022,transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,#D4AF3722,transparent_60%)]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
@@ -53,14 +53,14 @@ export const HeroSection = ({ onOpenFreePass, onOpenVirtualTour }) => {
           {/* Main Hero Copy */}
           <div className="lg:col-span-8 space-y-8">
             <div className="inline-block">
-              <span className="text-[#B9FF00] text-xs font-bold tracking-[0.4em] uppercase border-l-2 border-[#B9FF00] pl-3">
+              <span className="text-[#D4AF37] text-xs font-bold tracking-[0.4em] uppercase border-l-2 border-[#D4AF37] pl-3">
                 Engineering Human Potential
               </span>
             </div>
 
             <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black text-white leading-[0.88] uppercase italic tracking-tighter">
               BEYOND <br />
-              <span className="text-[#B9FF00]">LIMITS.</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059]">LIMITS.</span>
             </h1>
 
             <p className="text-white/60 text-base sm:text-lg max-w-xl font-light leading-relaxed">
@@ -69,21 +69,21 @@ export const HeroSection = ({ onOpenFreePass, onOpenVirtualTour }) => {
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-6 pt-2">
-              <button
-                onClick={onOpenFreePass}
-                className="bg-[#B9FF00] text-black px-8 py-4 font-black uppercase text-xs tracking-widest hover:scale-105 transition-transform flex items-center gap-3 cursor-pointer shadow-xl shadow-[#B9FF00]/10"
+              <a
+                href="#memberships"
+                className="bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059] text-black px-8 py-4 font-black uppercase text-xs tracking-widest hover:opacity-90 transition-all flex items-center gap-3 cursor-pointer shadow-xl shadow-[#D4AF37]/20"
               >
                 <Flame className="w-4 h-4 fill-black" /> Start Training
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </a>
 
-              <button
-                onClick={onOpenVirtualTour}
+              <a
+                href="#facilities"
                 className="group flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white/80 hover:text-white cursor-pointer"
               >
                 <span>View Facility Pods</span>
-                <div className="w-10 h-[1px] bg-white/30 group-hover:w-16 group-hover:bg-[#B9FF00] transition-all"></div>
-              </button>
+                <div className="w-10 h-[1px] bg-white/30 group-hover:w-16 group-hover:bg-[#D4AF37] transition-all"></div>
+              </a>
             </div>
 
             {/* Key Stats Bar */}
@@ -93,7 +93,7 @@ export const HeroSection = ({ onOpenFreePass, onOpenVirtualTour }) => {
                 <span className="text-[10px] uppercase tracking-widest text-white/40">Daily Intensity (kcal)</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-3xl font-black italic text-[#B9FF00]">84%</span>
+                <span className="text-3xl font-black italic text-[#D4AF37]">84%</span>
                 <span className="text-[10px] uppercase tracking-widest text-white/40">Avg. Peak Effort</span>
               </div>
               <div className="flex flex-col">
@@ -112,7 +112,7 @@ export const HeroSection = ({ onOpenFreePass, onOpenVirtualTour }) => {
             <div className="bg-zinc-950/80 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-[#B9FF00]" />
+                  <Zap className="w-4 h-4 text-[#D4AF37]" />
                   <span className="text-[10px] font-extrabold text-white tracking-[0.2em] uppercase">POD FEED LIVE</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -147,12 +147,12 @@ export const HeroSection = ({ onOpenFreePass, onOpenVirtualTour }) => {
                         }}
                         className={`w-full p-3.5 rounded-xl border text-left transition-all duration-200 flex items-center justify-between cursor-pointer ${
                           isSelected
-                            ? 'bg-[#B9FF00]/10 border-[#B9FF00] text-white font-bold'
+                            ? 'bg-[#D4AF37]/10 border-[#D4AF37] text-white font-bold'
                             : 'bg-black/60 border-white/5 text-white/50 hover:border-white/20 hover:text-white'
                         }`}
                       >
                         <span className="text-xs uppercase tracking-wider truncate">{vid.title}</span>
-                        {isSelected && <span className="w-2 h-2 rounded-full bg-[#B9FF00] animate-pulse" />}
+                        {isSelected && <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />}
                       </button>
                     );
                   })}
@@ -162,7 +162,7 @@ export const HeroSection = ({ onOpenFreePass, onOpenVirtualTour }) => {
 
             {/* Environmental Pod Status */}
             <div className="p-4 rounded-2xl bg-zinc-950/60 border border-white/10 flex items-center gap-3 text-xs text-white/70">
-              <Shield className="w-5 h-5 text-[#B9FF00] shrink-0" />
+              <Shield className="w-5 h-5 text-[#D4AF37] shrink-0" />
               <span>Oxygen-regulated pods, climate precision & Eleiko/Rogue certified.</span>
             </div>
           </div>

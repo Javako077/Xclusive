@@ -129,21 +129,20 @@ export const ExerciseMotionViewer = () => {
   return (
     <section id="motion-exercises" className="py-24 bg-black text-white relative overflow-hidden border-t border-white/5">
       {/* Background glow gradient */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#B9FF00]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-block mb-3">
-            <span className="text-[#B9FF00] text-xs font-bold tracking-[0.3em] uppercase border-l-2 border-[#B9FF00] pl-3 flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5 animate-pulse" />
-              Interactive Motion Studio
+            <span className="text-[#D4AF37] text-xs font-bold tracking-[0.3em] uppercase border-l-2 border-[#D4AF37] pl-3 flex items-center gap-2">
+              <Activity className="w-4 h-4" /> 3D Biomechanics & Velocity Lab
             </span>
           </div>
-          <h2 className="text-4xl sm:text-6xl font-black italic tracking-tighter uppercase text-white mb-4">
-            ANIMATED <span className="text-[#B9FF00]">BIOMECHANICS.</span>
+          <h2 className="text-4xl sm:text-6xl font-black italic tracking-tighter uppercase mb-4">
+            PRECISION <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059]">BIOMECHANICS.</span>
           </h2>
           <p className="text-white/50 text-base sm:text-lg font-light">
-            Visualize precision muscle activation and exercise execution mechanics with our real-time kinetic simulator.
+            Interactive kinematic engine detailing bar path, joint angles, and active muscle recruitment for peak lift performance.
           </p>
         </div>
 

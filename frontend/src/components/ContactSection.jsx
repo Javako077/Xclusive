@@ -6,7 +6,7 @@ export const ContactSection = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [goal, setGoal] = useState('Personal Training & Coaching');
+  const [goal, setGoal] = useState('VIP Keycard & Membership Tiers');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,21 +34,21 @@ export const ContactSection = () => {
           {/* Left info column */}
           <div className="lg:col-span-5 space-y-8">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#B9FF00]/10 border border-[#B9FF00]/30 rounded-full text-[#B9FF00] text-xs font-black uppercase tracking-widest mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-full text-[#D4AF37] text-xs font-black uppercase tracking-widest mb-4">
                 <MessageSquare className="w-3.5 h-3.5" />
                 <span>Get In Touch</span>
               </div>
               <h2 className="text-3xl sm:text-5xl font-black italic uppercase tracking-tight text-white">
-                START YOUR <span className="text-[#B9FF00]">TRANSFORMATION</span>
+                START YOUR <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059]">TRANSFORMATION</span>
               </h2>
               <p className="text-white/60 text-sm mt-3 leading-relaxed">
-                Have questions about our athletic facilities, high-performance coaching, or custom membership tiers? Reach out directly to our team.
+                Have questions about our athletic facilities or custom membership tiers? Reach out directly to our team.
               </p>
             </div>
 
             <div className="space-y-4">
               <div className="p-4 bg-zinc-950 border border-white/10 rounded-2xl flex items-start gap-4">
-                <div className="p-3 bg-[#B9FF00]/10 rounded-xl text-[#B9FF00]">
+                <div className="p-3 bg-[#D4AF37]/10 rounded-xl text-[#D4AF37]">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
@@ -58,72 +58,60 @@ export const ContactSection = () => {
               </div>
 
               <div className="p-4 bg-zinc-950 border border-white/10 rounded-2xl flex items-start gap-4">
-                <div className="p-3 bg-[#B9FF00]/10 rounded-xl text-[#B9FF00]">
+                <div className="p-3 bg-[#D4AF37]/10 rounded-xl text-[#D4AF37]">
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black uppercase tracking-wider text-white">Concierge & Bookings</h4>
-                  <p className="text-xs text-white/60 mt-0.5">+1 (800) 555-APEX / (800) 555-2739</p>
+                  <h4 className="text-xs font-black uppercase tracking-wider text-white">Direct Phone Support</h4>
+                  <p className="text-xs text-white/60 mt-0.5">+1 (800) 555-APEX (2739)</p>
                 </div>
               </div>
 
               <div className="p-4 bg-zinc-950 border border-white/10 rounded-2xl flex items-start gap-4">
-                <div className="p-3 bg-[#B9FF00]/10 rounded-xl text-[#B9FF00]">
+                <div className="p-3 bg-[#D4AF37]/10 rounded-xl text-[#D4AF37]">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black uppercase tracking-wider text-white">Direct Email</h4>
-                  <p className="text-xs text-white/60 mt-0.5">concierge@apexathleticlab.com</p>
-                </div>
-              </div>
-
-              <div className="p-4 bg-zinc-950 border border-white/10 rounded-2xl flex items-start gap-4">
-                <div className="p-3 bg-[#B9FF00]/10 rounded-xl text-[#B9FF00]">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-black uppercase tracking-wider text-white">Facility Operating Hours</h4>
-                  <p className="text-xs text-white/60 mt-0.5">Mon–Fri: 05:00 – 23:00 | Sat–Sun: 06:00 – 22:00 (24/7 VIP keycard access)</p>
+                  <h4 className="text-xs font-black uppercase tracking-wider text-white">Official Email</h4>
+                  <p className="text-xs text-white/60 mt-0.5">info@apexgymfitness.com</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Form Column */}
+          {/* Right form column */}
           <div className="lg:col-span-7">
-            <div className="bg-zinc-950 border border-white/10 rounded-3xl p-6 sm:p-10 relative">
+            <div className="bg-zinc-950 border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl">
               {submitted ? (
-                <div className="py-16 text-center space-y-4">
-                  <div className="w-16 h-16 bg-[#B9FF00]/10 text-[#B9FF00] border border-[#B9FF00]/30 rounded-3xl flex items-center justify-center mx-auto">
+                <div className="text-center py-12 space-y-4">
+                  <div className="w-16 h-16 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[#D4AF37] flex items-center justify-center mx-auto">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
-                  <h3 className="text-2xl font-black italic uppercase text-white">MESSAGE TRANSMITTED</h3>
-                  <p className="text-xs text-white/60 max-w-sm mx-auto">
-                    Thank you, <span className="text-white font-bold">{name}</span>. An APEX athletic performance specialist will review your inquiry and connect via email shortly.
+                  <h3 className="text-2xl font-black italic uppercase text-white">Inquiry Transmitted</h3>
+                  <p className="text-xs text-white/60 max-w-md mx-auto leading-relaxed">
+                    Thank you for connecting with Apex Gym. An athlete relations advisor will reach out to <span className="text-[#D4AF37] font-semibold">{email}</span> within 24 hours.
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
-                    className="mt-4 px-6 py-2.5 bg-white/10 border border-white/20 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-white/20 transition-all cursor-pointer"
+                    className="mt-4 px-6 py-2.5 bg-zinc-900 border border-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/10 cursor-pointer"
                   >
                     Send Another Message
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <h3 className="text-xl font-black italic uppercase text-white mb-2">
-                    SEND AN <span className="text-[#B9FF00]">ATHLETE INQUIRY</span>
-                  </h3>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <h3 className="text-2xl font-black italic uppercase text-white mb-2">Send Us A Message</h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Full Name</label>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Your Full Name</label>
                       <input
                         type="text"
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Marcus Vance"
-                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#B9FF00]"
+                        placeholder="e.g. Jordan Reed"
+                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
                       />
                     </div>
                     <div>
@@ -133,8 +121,8 @@ export const ContactSection = () => {
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="marcus@performance.com"
-                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#B9FF00]"
+                        placeholder="jordan@example.com"
+                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
                       />
                     </div>
                   </div>
@@ -146,8 +134,8 @@ export const ContactSection = () => {
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+1 (555) 019-2831"
-                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#B9FF00]"
+                        placeholder="+1 (555) 000-0000"
+                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#D4AF37]"
                       />
                     </div>
                     <div>
@@ -155,10 +143,10 @@ export const ContactSection = () => {
                       <select
                         value={goal}
                         onChange={(e) => setGoal(e.target.value)}
-                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#B9FF00] cursor-pointer"
+                        className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#D4AF37] cursor-pointer"
                       >
-                        <option value="Personal Training & Coaching">Personal Training & Coaching</option>
                         <option value="VIP Keycard & Membership Tiers">VIP Keycard & Membership Tiers</option>
+                        <option value="General Strength & Athletic Performance">General Strength & Athletic Performance</option>
                         <option value="Corporate / Group Passes">Corporate / Group Passes</option>
                         <option value="Facility Day Pass Inquiry">Facility Day Pass Inquiry</option>
                       </select>
@@ -172,18 +160,17 @@ export const ContactSection = () => {
                       required
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Tell us about your fitness goals, preferred coaching schedule, or facility questions..."
-                      className="w-full bg-black border border-white/10 rounded-xl p-4 text-xs text-white focus:outline-none focus:border-[#B9FF00] resize-none"
+                      placeholder="Tell us about your fitness goals or facility questions..."
+                      className="w-full bg-black border border-white/10 rounded-xl p-4 text-xs text-white focus:outline-none focus:border-[#D4AF37] resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-3.5 bg-[#B9FF00] text-black font-black text-xs uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#B9FF00]/10"
+                    className="w-full py-3.5 bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/10"
                   >
                     {loading ? 'Transmitting...' : 'Submit Inquiry'}
-                    {!loading && <Send className="w-4 h-4" />}
                   </button>
                 </form>
               )}
