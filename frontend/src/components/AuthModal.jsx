@@ -85,11 +85,13 @@ export const AuthModal = ({
 
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <img
-            src="/Xclusivelogo.png"
-            alt="Xclusive Gym"
-            className="h-12 w-auto object-contain mx-auto mb-3"
-          />
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-zinc-950 border-2 border-[#D4AF37] p-1.5 flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(212,175,55,0.4)] overflow-hidden">
+            <img
+              src="/Xclusivelogo.png"
+              alt="Xclusive Gym"
+              className="w-full h-full object-contain rounded-full brightness-110 contrast-125"
+            />
+          </div>
           <h3 className="text-2xl font-black italic uppercase tracking-tight text-white">
             XCLUSIVE <span className="text-[#D4AF37]">ATHLETE PORTAL</span>
           </h3>

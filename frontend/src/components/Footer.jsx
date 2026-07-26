@@ -17,8 +17,22 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
-            <a href="#hero" className="inline-block">
-              <img src="/Xclusivelogo.png" alt="Xclusive Gym & Wellness" className="h-14 sm:h-16 w-auto object-contain" />
+            <a href="#hero" className="inline-flex items-center gap-3.5 group">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-zinc-950 border-2 border-[#D4AF37] p-2 flex items-center justify-center shadow-[0_0_20px_rgba(212,175,55,0.4)] group-hover:shadow-[0_0_30px_rgba(255,215,0,0.7)] group-hover:border-[#FFD700] group-hover:scale-105 transition-all duration-300 overflow-hidden shrink-0">
+                <img
+                  src="/Xclusivelogo.png"
+                  alt="Xclusive Gym & Wellness"
+                  className="w-full h-full object-contain rounded-full brightness-110 contrast-125"
+                />
+              </div>
+              <div className="flex flex-col leading-none">
+                <span className="text-2xl sm:text-3xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5D77F] to-[#C5A059]">
+                  XCLUSIVE
+                </span>
+                <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.25em] text-white/60 uppercase mt-1">
+                  GYM & WELLNESS
+                </span>
+              </div>
             </a>
 
             <p className="text-xs text-white/50 leading-relaxed max-w-sm">
