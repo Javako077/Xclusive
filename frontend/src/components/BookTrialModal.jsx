@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Calendar, Clock, User, Mail, Phone, Dumbbell, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
+import { X, Calendar, Clock, User, Mail, Phone, Sparkles, CheckCircle2, ArrowRight, ShieldCheck, CreditCard } from 'lucide-react';
 
 export const BookTrialModal = ({ isOpen, onClose }) => {
   const [fullName, setFullName] = useState('');
@@ -7,8 +7,6 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
   const [phone, setPhone] = useState('');
   const [preferredDate, setPreferredDate] = useState('');
   const [preferredTime, setPreferredTime] = useState('10:00 AM');
-  const [trainingType, setTrainingType] = useState('Personal Training');
-  const [sessionType, setSessionType] = useState('In-Person');
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,14 +30,12 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
     setPhone('');
     setPreferredDate('');
     setPreferredTime('10:00 AM');
-    setTrainingType('Personal Training');
-    setSessionType('In-Person');
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-xl bg-zinc-950 border border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 shadow-2xl text-white max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-lg bg-zinc-950 border border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 shadow-2xl text-white max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -55,12 +51,13 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
             </div>
             <h3 className="text-2xl font-black italic uppercase text-white">TRIAL RESERVATION CONFIRMED!</h3>
             <p className="text-xs text-white/70 max-w-md mx-auto leading-relaxed">
-              Thank you, <span className="text-[#F5D76E] font-bold">{fullName}</span>! Your complimentary <span className="text-[#F5D76E] font-bold">{trainingType} ({sessionType})</span> trial session has been reserved for <span className="text-[#F5D76E] font-bold">{preferredDate || 'your selected date'} at {preferredTime}</span>.
+              Thank you, <span className="text-[#F5D76E] font-bold">{fullName}</span>! Your ₹2,000 trial pass has been reserved for <span className="text-[#F5D76E] font-bold">{preferredDate || 'your selected date'} at {preferredTime}</span>.
             </p>
             <div className="p-4 rounded-2xl bg-black border border-white/10 text-xs text-left space-y-1.5 max-w-md mx-auto text-white/60">
               <div><strong className="text-white">Email:</strong> {email}</div>
               <div><strong className="text-white">Phone:</strong> {phone}</div>
-              <div><strong className="text-white">Session Type:</strong> {sessionType}</div>
+              <div><strong className="text-white">Trial Fee Paid:</strong> ₹2,000 (100% Redeemable)</div>
+              <div><strong className="text-white">Scheduled Time:</strong> {preferredDate} at {preferredTime}</div>
             </div>
             <button
               onClick={handleReset}
@@ -79,34 +76,43 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
                 </span>
               </div>
               <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">
-                BOOK YOUR <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16]">FREE TRIAL</span>
+                BOOK YOUR <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16]">TRIAL</span>
               </h2>
               <p className="text-xs text-white/50 mt-1">
-                Experience our world-class facilities and expert coaching with zero obligation.
+                Experience our world-class facilities and expert athletic assessment.
+              </p>
+            </div>
+
+            {/* Redeemable Fee Notice Banner */}
+            <div className="mb-5 p-3.5 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-start gap-3">
+              <ShieldCheck className="w-5 h-5 text-[#F5D76E] shrink-0 mt-0.5" />
+              <p className="text-xs text-[#F5D76E] leading-relaxed">
+                <span className="font-bold">100% Redeemable Fee:</span> Your <span className="font-black">₹2,000</span> trial fee is fully redeemable against any membership plan you join.
               </p>
             </div>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Full Name & Email */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-white/70 mb-1.5">
-                    Full Name <span className="text-[#D4AF37]">*</span>
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                    <input
-                      type="text"
-                      required
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="e.g. Alex Mercer"
-                      className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
-                    />
-                  </div>
+              {/* Full Name */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-white/70 mb-1.5">
+                  Full Name <span className="text-[#D4AF37]">*</span>
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                  <input
+                    type="text"
+                    required
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="e.g. Alex Mercer"
+                    className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
+                  />
                 </div>
+              </div>
 
+              {/* Email & Phone Number */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-white/70 mb-1.5">
                     Email <span className="text-[#D4AF37]">*</span>
@@ -123,10 +129,7 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
                     />
                   </div>
                 </div>
-              </div>
 
-              {/* Phone Number & Preferred Date */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-white/70 mb-1.5">
                     Phone Number <span className="text-[#D4AF37]">*</span>
@@ -138,12 +141,15 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+1 (555) 000-0000"
+                      placeholder="+91 98765 43210"
                       className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
                     />
                   </div>
                 </div>
+              </div>
 
+              {/* Preferred Date & Preferred Time */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-white/70 mb-1.5">
                     Preferred Date <span className="text-[#D4AF37]">*</span>
@@ -159,10 +165,7 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
                     />
                   </div>
                 </div>
-              </div>
 
-              {/* Preferred Time & Select Training Type */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-white/70 mb-1.5">
                     Preferred Time <span className="text-[#D4AF37]">*</span>
@@ -174,65 +177,14 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
                       onChange={(e) => setPreferredTime(e.target.value)}
                       className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37] cursor-pointer"
                     >
-                      <option value="07:00 AM">07:00 AM - Morning Slot</option>
-                      <option value="09:00 AM">09:00 AM - Morning Slot</option>
-                      <option value="11:00 AM">11:00 AM - Midday Slot</option>
-                      <option value="02:00 PM">02:00 PM - Afternoon Slot</option>
-                      <option value="05:00 PM">05:00 PM - Evening Slot</option>
-                      <option value="07:00 PM">07:00 PM - Night Slot</option>
+                      <option value="07:00 AM">07:00 AM</option>
+                      <option value="09:00 AM">09:00 AM</option>
+                      <option value="11:00 AM">11:00 AM</option>
+                      <option value="02:00 PM">02:00 PM</option>
+                      <option value="05:00 PM">05:00 PM</option>
+                      <option value="07:00 PM">07:00 PM</option>
                     </select>
                   </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-white/70 mb-1.5">
-                    Select Training Type <span className="text-[#D4AF37]">*</span>
-                  </label>
-                  <div className="relative">
-                    <Dumbbell className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
-                    <select
-                      value={trainingType}
-                      onChange={(e) => setTrainingType(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37] cursor-pointer"
-                    >
-                      <option value="Personal Training">Personal Training</option>
-                      <option value="Strength Training">Strength Training</option>
-                      <option value="Weight Loss">Weight Loss</option>
-                      <option value="Muscle Building">Muscle Building</option>
-                      <option value="Functional Training">Functional Training</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              {/* Session Type */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-white/70 mb-1.5">
-                  Session Type <span className="text-[#D4AF37]">*</span>
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setSessionType('In-Person')}
-                    className={`py-3 rounded-xl border text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                      sessionType === 'In-Person'
-                        ? 'bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black border-[#F5D76E] shadow'
-                        : 'bg-black border-white/10 text-white/60 hover:text-white'
-                    }`}
-                  >
-                    In-Person
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSessionType('Online')}
-                    className={`py-3 rounded-xl border text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                      sessionType === 'Online'
-                        ? 'bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black border-[#F5D76E] shadow'
-                        : 'bg-black border-white/10 text-white/60 hover:text-white'
-                    }`}
-                  >
-                    Online
-                  </button>
                 </div>
               </div>
 
@@ -242,7 +194,8 @@ export const BookTrialModal = ({ isOpen, onClose }) => {
                 disabled={loading}
                 className="w-full py-4 mt-2 bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/20"
               >
-                {loading ? 'Reserving Trial...' : 'Confirm Free Trial Reservation'}
+                <CreditCard className="w-4 h-4" />
+                {loading ? 'Processing Payment...' : 'Pay ₹2,000 & Book Trial'}
                 {!loading && <ArrowRight className="w-4 h-4" />}
               </button>
             </form>

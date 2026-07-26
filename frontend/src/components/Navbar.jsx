@@ -25,7 +25,7 @@ export const Navbar = ({
     { name: 'Home', href: '#hero' },
     { name: 'About', href: '#about' },
     { name: 'Why Us', href: '#why-us' },
-    { name: 'Free Trial', href: '#trial' },
+    { name: 'Trial Pass', href: '#trial' },
     { name: 'Classes', href: '#classes' },
     { name: 'Facilities', href: '#facilities' },
     { name: 'Testimonials', href: '#testimonials' },
