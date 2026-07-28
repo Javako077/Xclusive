@@ -28,6 +28,14 @@ export const signup = async (req, res) => {
 
     const userRole = role && ["user", "staff", "admin"].includes(role) ? role : "user";
 
+    if (userRole === "admin") {
+      const currentAdminCount = await User.countDocuments({ role: "admin" });
+      if (currentAdminCount >= 2) {
+        res.status(403).json({ error: "Maximum limit of 2 Admin accounts reached. No additional admin accounts permitted." });
+        return;
+      }
+    }
+
     const user = await User.create({
       name,
       email: email.toLowerCase(),
@@ -91,8 +99,16 @@ export const login = async (req, res) => {
         return;
       }
 
-      // If login specifies role and user's database role differs, update role if requested or match
-      if (role && ["admin", "staff", "user"].includes(role) && user.role !== role) {
+      // If user is attempting to log in as admin but is not yet an admin
+      if (role === "admin" && user.role !== "admin") {
+        const currentAdminCount = await User.countDocuments({ role: "admin" });
+        if (currentAdminCount >= 2) {
+          res.status(403).json({ error: "Maximum limit of 2 Admin accounts reached. No additional admin logins permitted." });
+          return;
+        }
+        user.role = "admin";
+        await user.save();
+      } else if (role && ["staff", "user"].includes(role) && user.role !== role && user.role !== "admin") {
         user.role = role;
         await user.save();
       }
@@ -100,6 +116,15 @@ export const login = async (req, res) => {
       // User doesn't exist, auto-signup with specified role or default
       const name = email.includes("@") ? email.split("@")[0].toUpperCase() : "ATHLETE";
       const userRole = role && ["user", "staff", "admin"].includes(role) ? role : "user";
+
+      if (userRole === "admin") {
+        const currentAdminCount = await User.countDocuments({ role: "admin" });
+        if (currentAdminCount >= 2) {
+          res.status(403).json({ error: "Maximum limit of 2 Admin accounts reached. No additional admin logins permitted." });
+          return;
+        }
+      }
+
       user = await User.create({
         name,
         email: cleanInput.includes("@") ? cleanInput : `${cleanInput}@xclusivegym.com`,
