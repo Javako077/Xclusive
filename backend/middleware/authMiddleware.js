@@ -22,6 +22,11 @@ export const protect = async (req, res, next) => {
         return;
       }
 
+      if (req.user.isBlocked) {
+        res.status(403).json({ error: "Your account has been suspended/blocked. Please contact support." });
+        return;
+      }
+
       next();
     } catch (error) {
       console.error("[Auth Middleware Error]", error);
@@ -29,5 +34,21 @@ export const protect = async (req, res, next) => {
     }
   } else {
     res.status(401).json({ error: "Not authorized, no token provided" });
+  }
+};
+
+export const admin = (req, res, next) => {
+  if (req.user && req.user.role === "admin") {
+    next();
+  } else {
+    res.status(403).json({ error: "Access denied. Administrator privileges required." });
+  }
+};
+
+export const staffOrAdmin = (req, res, next) => {
+  if (req.user && (req.user.role === "admin" || req.user.role === "staff")) {
+    next();
+  } else {
+    res.status(403).json({ error: "Access denied. Staff or Admin privileges required." });
   }
 };

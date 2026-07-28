@@ -43,6 +43,32 @@ export const apiService = {
     return result.user;
   },
 
+  async sendOtp(data) {
+    const res = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || "Failed to send OTP code.");
+    }
+    return result;
+  },
+
+  async verifyOtpAndResetPassword(data) {
+    const res = await fetch(`${API_BASE_URL}/api/auth/verify-otp-reset`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || "Failed to verify OTP code & reset password.");
+    }
+    return result;
+  },
+
   // Contact API
   async submitContact(data) {
     const res = await fetch(`${API_BASE_URL}/api/contact`, {
@@ -114,5 +140,174 @@ export const apiService = {
   // Logout utility
   logout() {
     localStorage.removeItem("token");
+  },
+
+  // Admin APIs
+  async getAdminStats() {
+    const res = await fetch(`${API_BASE_URL}/api/admin/stats`, {
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to load admin stats");
+    return result;
+  },
+
+  async getAdminUsers() {
+    const res = await fetch(`${API_BASE_URL}/api/admin/users`, {
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to load users");
+    return result;
+  },
+
+  async updateAdminUserRole(userId, role) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/role`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify({ role }),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to update role");
+    return result;
+  },
+
+  async updateAdminUserPlan(userId, membershipPlan) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/plan`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify({ membershipPlan }),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to update user plan");
+    return result;
+  },
+
+  async deleteAdminUser(userId) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to delete user");
+    return result;
+  },
+
+  async getAdminBookings() {
+    const res = await fetch(`${API_BASE_URL}/api/admin/bookings`, {
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to load bookings");
+    return result;
+  },
+
+  async deleteAdminBooking(bookingId) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/bookings/${bookingId}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to delete booking");
+    return result;
+  },
+
+  async toggleBlockAdminUser(userId) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/block`, {
+      method: "PUT",
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to update block status");
+    return result;
+  },
+
+  async getAdminContacts() {
+    const res = await fetch(`${API_BASE_URL}/api/admin/contacts`, {
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to load contacts");
+    return result;
+  },
+
+  async updateAdminBookingStatus(bookingId, status) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/bookings/${bookingId}/status`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify({ status }),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to update booking status");
+    return result;
+  },
+
+  async fetchAdminContent() {
+    const res = await fetch(`${API_BASE_URL}/api/admin/content`, {
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to fetch content");
+    return result;
+  },
+
+  async createAdminContent(data) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/content`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to create content");
+    return result;
+  },
+
+  async deleteAdminContent(id) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/content/${id}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to delete content");
+    return result;
+  },
+
+  async fetchAdminNotifications() {
+    const res = await fetch(`${API_BASE_URL}/api/admin/notifications`, {
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to fetch notifications");
+    return result;
+  },
+
+  async sendAdminNotification(data) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/notifications`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to broadcast notification");
+    return result;
+  },
+
+  async deleteAdminNotification(id) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/notifications/${id}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to delete notification");
+    return result;
+  },
+
+  async fetchAdminReports() {
+    const res = await fetch(`${API_BASE_URL}/api/admin/reports`, {
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || "Failed to fetch analytics report");
+    return result;
   }
 };

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Dumbbell, Menu, X, ChevronRight, User } from 'lucide-react';
+import { Dumbbell, Menu, X, ChevronRight, User, ShieldAlert } from 'lucide-react';
 
 export const Navbar = ({
   user,
   onOpenAuth,
   onOpenProfile,
+  onOpenAdmin,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -82,6 +83,17 @@ export const Navbar = ({
 
         {/* Action Buttons */}
         <div className="hidden lg:flex items-center gap-3">
+          {/* Admin Portal Button - Show ONLY for Admin role */}
+          {user && user.role === 'admin' && (
+            <button
+              onClick={onOpenAdmin}
+              className="px-4 py-2 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white font-black text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer shadow-lg"
+              title="Open Admin Command Center"
+            >
+              <ShieldAlert className="w-3.5 h-3.5" /> Admin Portal
+            </button>
+          )}
+
           {/* User Auth or Profile Button */}
           {user ? (
             <button
@@ -156,6 +168,18 @@ export const Navbar = ({
           </div>
 
           <div className="pt-3 border-t border-white/10 space-y-2">
+            {user && user.role === 'admin' && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenAdmin();
+                }}
+                className="w-full py-2.5 rounded-none bg-red-500/10 border border-red-500/30 text-red-400 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+              >
+                <ShieldAlert className="w-4 h-4" /> Admin Portal
+              </button>
+            )}
+
             {!user ? (
               <button
                 onClick={() => {

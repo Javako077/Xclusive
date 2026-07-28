@@ -49,6 +49,28 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "Muscle Building & Hypertrophy"
   },
+  phone: {
+    type: String,
+    trim: true,
+    default: ""
+  },
+  resetOtp: {
+    type: String,
+    default: null
+  },
+  resetOtpExpires: {
+    type: Date,
+    default: null
+  },
+  role: {
+    type: String,
+    enum: ["user", "staff", "admin"],
+    default: "user"
+  },
+  isBlocked: {
+    type: Boolean,
+    default: false
+  },
   savedPlans: [SavedPlanSchema]
 }, {
   timestamps: true
