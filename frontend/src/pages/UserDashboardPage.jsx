@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navbar } from '../components/Navbar';
 import { UserProfileModal } from '../components/UserProfileModal';
 import { Footer } from '../components/Footer';
@@ -7,14 +7,21 @@ import { apiService } from '../services/api';
 
 export const UserDashboardPage = ({ user, setUser, onDeleteSavedPlan }) => {
   const navigate = useNavigate();
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+
+  const handleLogout = () => {
+    apiService.logout();
+    setUser(null);
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-[#D4AF37] selection:text-black antialiased flex flex-col">
       <Navbar
         user={user}
         onOpenAuth={() => navigate('/')}
-        onOpenProfile={() => {}}
-        onOpenAdmin={() => navigate('/admin/dashboard')}
+        onOpenProfile={() => setProfileModalOpen(true)}
+        onLogout={handleLogout}
       />
 
       <main className="flex-1 pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
@@ -97,6 +104,14 @@ export const UserDashboardPage = ({ user, setUser, onDeleteSavedPlan }) => {
       </main>
 
       <Footer />
+
+      <UserProfileModal
+        isOpen={profileModalOpen}
+        onClose={() => setProfileModalOpen(false)}
+        user={user}
+        onLogout={handleLogout}
+        onDeleteSavedPlan={onDeleteSavedPlan}
+      />
     </div>
   );
 };

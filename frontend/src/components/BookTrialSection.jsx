@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, Mail, Phone, Sparkles, CheckCircle2, ArrowRight, ShieldCheck, CreditCard } from 'lucide-react';
 import { apiService } from '../services/api';
 
@@ -17,17 +17,34 @@ const INITIAL_10_SLOTS = [
   { id: 'e5', time: '09:00 PM - 10:00 PM', period: 'Evening', max: 4, booked: 0 },
 ];
 
-export const BookTrialSection = () => {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+export const BookTrialSection = ({ user }) => {
+  const [fullName, setFullName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phone || '');
   const [preferredDate, setPreferredDate] = useState('');
   const [preferredTime, setPreferredTime] = useState('05:00 AM - 06:00 AM');
 
   // Slot capacity state (Max 4 persons per slot)
   const [slots, setSlots] = useState(INITIAL_10_SLOTS);
+  const [userBookedTimes, setUserBookedTimes] = useState(new Set());
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Fetch real-time availability dynamically when date or email changes
+  useEffect(() => {
+    let active = true;
+    const fetchSlots = async () => {
+      const activeEmail = email || user?.email;
+      const data = await apiService.getSlotAvailability(preferredDate, activeEmail);
+      if (data && data.slots && active) {
+        setSlots(data.slots);
+      }
+    };
+    fetchSlots();
+    return () => {
+      active = false;
+    };
+  }, [preferredDate, email, user?.email]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +55,7 @@ export const BookTrialSection = () => {
       // Backend Double Check At Booking Instant
       const res = await apiService.createBooking({
         fullName,
-        email,
+        email: email || user?.email,
         phone,
         date: preferredDate || new Date().toISOString().split('T')[0],
         slotTime: preferredTime,
@@ -46,9 +63,20 @@ export const BookTrialSection = () => {
         planName: 'Trial Pass (₹2,000)',
       });
 
+      setUserBookedTimes((prev) => new Set(prev).add(preferredTime));
+
       if (res.slotStatus) {
         setSlots((prev) =>
-          prev.map((s) => (s.time === preferredTime ? { ...s, booked: res.slotStatus.booked } : s))
+          prev.map((s) =>
+            s.time === preferredTime
+              ? {
+                  ...s,
+                  booked: res.slotStatus.booked,
+                  isUserBooked: true,
+                  isBooked: true,
+                }
+              : s
+          )
         );
       }
       setSubmitted(true);
@@ -206,19 +234,19 @@ export const BookTrialSection = () => {
                     {slots
                       .filter((s) => s.period === 'Morning')
                       .map((s) => {
-                        const isFull = s.booked >= s.max;
-                        const availableSpots = s.max - s.booked;
-                        const isSelected = preferredTime === s.time && !isFull;
+                        const isSlotBooked = Boolean(s.isBooked || s.isUserBooked || s.booked >= s.max || userBookedTimes.has(s.time));
+                        const availableSpots = Math.max(0, s.max - (s.booked || 0));
+                        const isSelected = preferredTime === s.time && !isSlotBooked;
 
                         return (
                           <button
                             type="button"
                             key={s.id}
-                            disabled={isFull}
+                            disabled={isSlotBooked}
                             onClick={() => setPreferredTime(s.time)}
                             className={`p-2.5 rounded-xl border text-left transition-all relative flex flex-col justify-between ${
-                              isFull
-                                ? 'bg-red-950/20 border-red-500/30 text-red-400 opacity-50 cursor-not-allowed'
+                              isSlotBooked
+                                ? 'bg-red-950/20 border-red-500/30 text-red-400 opacity-60 cursor-not-allowed'
                                 : isSelected
                                 ? 'bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black border-[#F5D76E] font-bold shadow cursor-pointer'
                                 : 'bg-black border-white/10 text-white/80 hover:border-white/30 cursor-pointer'
@@ -226,9 +254,9 @@ export const BookTrialSection = () => {
                           >
                             <div className="flex items-center justify-between">
                               <span className="text-[11px] font-black uppercase">{s.time}</span>
-                              {isFull ? (
-                                <span className="text-[8px] font-black uppercase px-1 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/40">
-                                  FULL
+                              {isSlotBooked ? (
+                                <span className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/40">
+                                  BOOKED
                                 </span>
                               ) : (
                                 <span
@@ -241,7 +269,7 @@ export const BookTrialSection = () => {
                               )}
                             </div>
                             <div className="text-[9px] opacity-75 mt-0.5">
-                              {isFull ? '4/4 Booked' : `${s.booked}/4 Booked`}
+                              {isSlotBooked ? 'Booked' : `${s.booked || 0}/4 Booked`}
                             </div>
                           </button>
                         );
@@ -256,19 +284,19 @@ export const BookTrialSection = () => {
                     {slots
                       .filter((s) => s.period === 'Evening')
                       .map((s) => {
-                        const isFull = s.booked >= s.max;
-                        const availableSpots = s.max - s.booked;
-                        const isSelected = preferredTime === s.time && !isFull;
+                        const isSlotBooked = Boolean(s.isBooked || s.isUserBooked || s.booked >= s.max || userBookedTimes.has(s.time));
+                        const availableSpots = Math.max(0, s.max - (s.booked || 0));
+                        const isSelected = preferredTime === s.time && !isSlotBooked;
 
                         return (
                           <button
                             type="button"
                             key={s.id}
-                            disabled={isFull}
+                            disabled={isSlotBooked}
                             onClick={() => setPreferredTime(s.time)}
                             className={`p-2.5 rounded-xl border text-left transition-all relative flex flex-col justify-between ${
-                              isFull
-                                ? 'bg-red-950/20 border-red-500/30 text-red-400 opacity-50 cursor-not-allowed'
+                              isSlotBooked
+                                ? 'bg-red-950/20 border-red-500/30 text-red-400 opacity-60 cursor-not-allowed'
                                 : isSelected
                                 ? 'bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black border-[#F5D76E] font-bold shadow cursor-pointer'
                                 : 'bg-black border-white/10 text-white/80 hover:border-white/30 cursor-pointer'
@@ -276,9 +304,9 @@ export const BookTrialSection = () => {
                           >
                             <div className="flex items-center justify-between">
                               <span className="text-[11px] font-black uppercase">{s.time}</span>
-                              {isFull ? (
-                                <span className="text-[8px] font-black uppercase px-1 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/40">
-                                  FULL
+                              {isSlotBooked ? (
+                                <span className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/40">
+                                  BOOKED
                                 </span>
                               ) : (
                                 <span
@@ -291,7 +319,7 @@ export const BookTrialSection = () => {
                               )}
                             </div>
                             <div className="text-[9px] opacity-75 mt-0.5">
-                              {isFull ? '4/4 Booked' : `${s.booked}/4 Booked`}
+                              {isSlotBooked ? 'Booked' : `${s.booked || 0}/4 Booked`}
                             </div>
                           </button>
                         );

@@ -21,27 +21,37 @@ const DEFAULT_SLOTS = [
  */
 export const getSlotAvailability = async (req, res) => {
   try {
-    const { date } = req.query;
+    const { date, userEmail } = req.query;
     const targetDate = date || new Date().toISOString().split("T")[0];
 
-    // Aggregate booking counts per slotTime for the target date
-    const counts = await Booking.aggregate([
-      { $match: { date: targetDate } },
-      { $group: { _id: "$slotTime", count: { $sum: 1 } } },
-    ]);
+    // Find all bookings for target date
+    const bookings = await Booking.find({ date: targetDate });
 
     const countMap = {};
-    counts.forEach((item) => {
-      countMap[item._id] = item.count;
+    const userBookedSet = new Set();
+
+    bookings.forEach((b) => {
+      countMap[b.slotTime] = (countMap[b.slotTime] || 0) + 1;
+      if (userEmail && b.email && b.email.toLowerCase() === userEmail.toLowerCase()) {
+        userBookedSet.add(b.slotTime);
+      }
     });
 
     const availability = DEFAULT_SLOTS.map((slot) => {
       const currentBooked = countMap[slot.time] || 0;
+      const isUserBooked = userBookedSet.has(slot.time);
+      const isFull = currentBooked >= slot.max;
+      const availableSpots = Math.max(0, slot.max - currentBooked);
+      const isBooked = isUserBooked || isFull;
+
       return {
         ...slot,
         booked: currentBooked,
-        availableSpots: Math.max(0, slot.max - currentBooked),
-        isFull: currentBooked >= slot.max,
+        availableSpots,
+        isFull,
+        isUserBooked,
+        isBooked,
+        statusText: isBooked ? "BOOKED" : `${availableSpots} Left`,
       };
     });
 

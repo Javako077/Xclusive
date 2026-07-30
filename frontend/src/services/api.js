@@ -9,8 +9,17 @@ const getHeaders = () => {
   return headers;
 };
 
+const getAdminHeaders = () => {
+  const headers = { "Content-Type": "application/json" };
+  const adminToken = localStorage.getItem("adminToken");
+  if (adminToken) {
+    headers["Authorization"] = `Bearer ${adminToken}`;
+  }
+  return headers;
+};
+
 export const apiService = {
-  // Auth APIs
+  // User Auth APIs (Completely separate from Admin Auth)
   async signup(data) {
     const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
       method: "POST",
@@ -43,6 +52,17 @@ export const apiService = {
     return result.user;
   },
 
+  async getMe() {
+    const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || "Failed to load user profile");
+    }
+    return result;
+  },
+
   async sendOtp(data) {
     const res = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
       method: "POST",
@@ -52,6 +72,19 @@ export const apiService = {
     const result = await res.json();
     if (!res.ok || result.error) {
       throw new Error(result.error || "Failed to send OTP code.");
+    }
+    return result;
+  },
+
+  async verifyUserOtp(data) {
+    const res = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || "Invalid or expired OTP code.");
     }
     return result;
   },
@@ -67,6 +100,84 @@ export const apiService = {
       throw new Error(result.error || "Failed to verify OTP code & reset password.");
     }
     return result;
+  },
+
+  logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("adminToken");
+    sessionStorage.clear();
+  },
+
+  // Dedicated Admin Auth APIs (Uses adminToken & /api/admin/auth/*)
+  async adminLogin(data) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || "Admin authentication failed.");
+    }
+    if (result.token) {
+      localStorage.setItem("adminToken", result.token);
+    }
+    return result;
+  },
+
+  async adminForgotPassword(data) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/auth/forgot-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || "Failed to request admin password reset.");
+    }
+    return result;
+  },
+
+  async adminVerifyOtp(data) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/auth/verify-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || "Invalid or expired Admin OTP code.");
+    }
+    return result;
+  },
+
+  async adminResetPassword(data) {
+    const res = await fetch(`${API_BASE_URL}/api/admin/auth/reset-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || "Failed to reset admin password.");
+    }
+    return result;
+  },
+
+  async getAdminProfile() {
+    const res = await fetch(`${API_BASE_URL}/api/admin/auth/me`, {
+      headers: getAdminHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || "Failed to load admin profile.");
+    }
+    return result.admin;
+  },
+
+  adminLogout() {
+    localStorage.removeItem("adminToken");
   },
 
   // Contact API
@@ -112,9 +223,13 @@ export const apiService = {
   },
 
   // Booking & Concurrency APIs
-  async getSlotAvailability(date) {
+  async getSlotAvailability(date, userEmail) {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/bookings/availability?date=${date || ''}`, {
+      let url = `${API_BASE_URL}/api/bookings/availability?date=${date || ''}`;
+      if (userEmail) {
+        url += `&userEmail=${encodeURIComponent(userEmail)}`;
+      }
+      const res = await fetch(url, {
         headers: getHeaders(),
       });
       if (!res.ok) return null;
@@ -137,15 +252,10 @@ export const apiService = {
     return result;
   },
 
-  // Logout utility
-  logout() {
-    localStorage.removeItem("token");
-  },
-
-  // Admin APIs
+  // Admin Portal Dashboard APIs (Protected strictly with adminToken)
   async getAdminStats() {
     const res = await fetch(`${API_BASE_URL}/api/admin/stats`, {
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to load admin stats");
@@ -154,7 +264,7 @@ export const apiService = {
 
   async getAdminUsers() {
     const res = await fetch(`${API_BASE_URL}/api/admin/users`, {
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to load users");
@@ -164,7 +274,7 @@ export const apiService = {
   async updateAdminUserRole(userId, role) {
     const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/role`, {
       method: "PUT",
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
       body: JSON.stringify({ role }),
     });
     const result = await res.json();
@@ -175,7 +285,7 @@ export const apiService = {
   async updateAdminUserPlan(userId, membershipPlan) {
     const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/plan`, {
       method: "PUT",
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
       body: JSON.stringify({ membershipPlan }),
     });
     const result = await res.json();
@@ -186,7 +296,7 @@ export const apiService = {
   async deleteAdminUser(userId) {
     const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
       method: "DELETE",
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to delete user");
@@ -195,7 +305,7 @@ export const apiService = {
 
   async getAdminBookings() {
     const res = await fetch(`${API_BASE_URL}/api/admin/bookings`, {
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to load bookings");
@@ -205,7 +315,7 @@ export const apiService = {
   async deleteAdminBooking(bookingId) {
     const res = await fetch(`${API_BASE_URL}/api/admin/bookings/${bookingId}`, {
       method: "DELETE",
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to delete booking");
@@ -215,7 +325,7 @@ export const apiService = {
   async toggleBlockAdminUser(userId) {
     const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/block`, {
       method: "PUT",
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to update block status");
@@ -224,7 +334,7 @@ export const apiService = {
 
   async getAdminContacts() {
     const res = await fetch(`${API_BASE_URL}/api/admin/contacts`, {
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to load contacts");
@@ -234,7 +344,7 @@ export const apiService = {
   async updateAdminBookingStatus(bookingId, status) {
     const res = await fetch(`${API_BASE_URL}/api/admin/bookings/${bookingId}/status`, {
       method: "PUT",
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
       body: JSON.stringify({ status }),
     });
     const result = await res.json();
@@ -244,7 +354,7 @@ export const apiService = {
 
   async fetchAdminContent() {
     const res = await fetch(`${API_BASE_URL}/api/admin/content`, {
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to fetch content");
@@ -254,7 +364,7 @@ export const apiService = {
   async createAdminContent(data) {
     const res = await fetch(`${API_BASE_URL}/api/admin/content`, {
       method: "POST",
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
       body: JSON.stringify(data),
     });
     const result = await res.json();
@@ -265,7 +375,7 @@ export const apiService = {
   async deleteAdminContent(id) {
     const res = await fetch(`${API_BASE_URL}/api/admin/content/${id}`, {
       method: "DELETE",
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to delete content");
@@ -274,7 +384,7 @@ export const apiService = {
 
   async fetchAdminNotifications() {
     const res = await fetch(`${API_BASE_URL}/api/admin/notifications`, {
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to fetch notifications");
@@ -284,7 +394,7 @@ export const apiService = {
   async sendAdminNotification(data) {
     const res = await fetch(`${API_BASE_URL}/api/admin/notifications`, {
       method: "POST",
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
       body: JSON.stringify(data),
     });
     const result = await res.json();
@@ -295,7 +405,7 @@ export const apiService = {
   async deleteAdminNotification(id) {
     const res = await fetch(`${API_BASE_URL}/api/admin/notifications/${id}`, {
       method: "DELETE",
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to delete notification");
@@ -304,7 +414,7 @@ export const apiService = {
 
   async fetchAdminReports() {
     const res = await fetch(`${API_BASE_URL}/api/admin/reports`, {
-      headers: getHeaders(),
+      headers: getAdminHeaders(),
     });
     const result = await res.json();
     if (!res.ok || result.error) throw new Error(result.error || "Failed to fetch analytics report");

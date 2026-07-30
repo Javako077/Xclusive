@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Dumbbell, Menu, X, ChevronRight, User, ShieldAlert } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, ChevronRight, User, LogOut, ChevronDown } from 'lucide-react';
 
 export const Navbar = ({
   user,
   onOpenAuth,
   onOpenProfile,
-  onOpenAdmin,
+  onLogout,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const desktopDropdownRef = useRef(null);
+  const mobileDropdownRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,6 +24,19 @@ export const Navbar = ({
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close dropdown menu on click outside (Handles both Desktop & Mobile refs properly)
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const clickedDesktop = desktopDropdownRef.current && desktopDropdownRef.current.contains(e.target);
+      const clickedMobile = mobileDropdownRef.current && mobileDropdownRef.current.contains(e.target);
+      if (!clickedDesktop && !clickedMobile) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const navLinks = [
@@ -62,51 +79,74 @@ export const Navbar = ({
           </div>
         </a>
 
-        {/* Desktop Nav Links (Hidden for Admin role - only show for non-admin/guests) */}
-        {(!user || user.role !== 'admin') && (
-          <nav className="hidden xl:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/50 hover:text-white transition-colors py-1 relative group flex items-center gap-1"
-              >
-                {link.name}
-                {link.badge && (
-                  <span className="px-1.5 py-0.2 rounded bg-[#D4AF37] text-black text-[8px] font-black uppercase">
-                    {link.badge}
-                  </span>
-                )}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
-              </a>
-            ))}
-          </nav>
-        )}
+        {/* Desktop Nav Links - Always working for all users */}
+        <nav className="hidden xl:flex items-center gap-6">
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/50 hover:text-white transition-colors py-1 relative group flex items-center gap-1"
+            >
+              {link.name}
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
+            </a>
+          ))}
+        </nav>
 
-        {/* Action Buttons */}
+        {/* Action Buttons (Desktop View) */}
         <div className="hidden lg:flex items-center gap-3">
-          {/* Admin Portal Button - Show ONLY for Admin role */}
-          {user && user.role === 'admin' && (
-            <button
-              onClick={onOpenAdmin}
-              className="px-4 py-2 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white font-black text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer shadow-lg"
-              title="Open Admin Command Center"
-            >
-              <ShieldAlert className="w-3.5 h-3.5" /> Admin Portal
-            </button>
-          )}
-
-          {/* User Auth or Profile Button */}
           {user ? (
-            <button
-              onClick={onOpenProfile}
-              className="px-3.5 py-2 rounded-full bg-zinc-900 border border-[#D4AF37]/40 text-xs font-bold text-white hover:border-[#D4AF37] transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <div className="w-6 h-6 rounded-full bg-[#D4AF37] text-black text-xs font-black flex items-center justify-center">
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-              <span className="max-w-[100px] truncate">{user.name}</span>
-            </button>
+            <div className="relative" ref={desktopDropdownRef}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDropdownOpen(!dropdownOpen);
+                }}
+                className="px-3.5 py-2 rounded-full bg-zinc-900 border border-[#D4AF37]/50 text-xs font-bold text-white hover:border-[#D4AF37] hover:bg-zinc-800 transition-all flex items-center gap-2.5 cursor-pointer shadow-md"
+              >
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black text-xs font-black flex items-center justify-center shadow">
+                  {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                </div>
+                <span className="max-w-[120px] truncate">{user.name}</span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-[#D4AF37] transition-transform duration-200 ${
+                    dropdownOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {/* Desktop User Avatar Dropdown Menu */}
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-zinc-950 border border-[#D4AF37]/30 rounded-2xl shadow-2xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl">
+                  <div className="px-3 py-2 border-b border-white/10 mb-1">
+                    <p className="text-xs font-bold text-white truncate">{user.name}</p>
+                    <p className="text-[10px] text-white/50 truncate">{user.email}</p>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDropdownOpen(false);
+                      onOpenProfile();
+                    }}
+                    className="w-full px-3 py-2.5 rounded-xl text-xs font-bold text-white/90 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-2 cursor-pointer"
+                  >
+                    <User className="w-4 h-4 text-[#D4AF37]" />
+                    <span>Profile</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDropdownOpen(false);
+                      if (onLogout) onLogout();
+                    }}
+                    className="w-full px-3 py-2.5 rounded-xl text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors flex items-center gap-2 cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4 text-red-400" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <button
               onClick={onOpenAuth}
@@ -117,24 +157,48 @@ export const Navbar = ({
           )}
         </div>
 
-        {/* Mobile menu trigger & Quick Actions */}
+        {/* Mobile & Tablet View Action Trigger */}
         <div className="flex lg:hidden items-center gap-2">
-          {user && user.role === 'admin' && (
-            <button
-              onClick={onOpenAdmin}
-              className="px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 font-black text-xs uppercase tracking-wider cursor-pointer flex items-center gap-1"
-            >
-              <ShieldAlert className="w-3 h-3" /> Admin
-            </button>
-          )}
-
           {user ? (
-            <button
-              onClick={onOpenProfile}
-              className="px-3 py-1.5 rounded-full bg-[#D4AF37] text-black font-black text-xs uppercase tracking-wider cursor-pointer"
-            >
-              {user.name.split(' ')[0]}
-            </button>
+            <div className="relative" ref={mobileDropdownRef}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDropdownOpen(!dropdownOpen);
+                }}
+                className="px-3 py-1.5 rounded-full bg-[#D4AF37] text-black font-black text-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>{user.name ? user.name.split(' ')[0] : 'User'}</span>
+                <ChevronDown className="w-3 h-3" />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-44 bg-zinc-950 border border-[#D4AF37]/30 rounded-2xl shadow-2xl p-1.5 z-50 backdrop-blur-xl">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDropdownOpen(false);
+                      onOpenProfile();
+                    }}
+                    className="w-full px-3 py-2 rounded-xl text-xs font-bold text-white hover:bg-white/10 flex items-center gap-2 cursor-pointer"
+                  >
+                    <User className="w-3.5 h-3.5 text-[#D4AF37]" />
+                    <span>Profile</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDropdownOpen(false);
+                      if (onLogout) onLogout();
+                    }}
+                    className="w-full px-3 py-2 rounded-xl text-xs font-bold text-red-400 hover:bg-red-500/10 flex items-center gap-2 cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5 text-red-400" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <button
               onClick={onOpenAuth}
@@ -157,62 +221,52 @@ export const Navbar = ({
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-zinc-950/98 backdrop-blur-2xl border-b border-white/10 px-4 pt-4 pb-6 space-y-3 animate-in slide-in-from-top-4 duration-200">
-          {(!user || user.role !== 'admin') && (
-            <div className="flex flex-col space-y-1">
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider text-white/80 hover:bg-white/5 hover:text-[#D4AF37] transition-colors flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <span>{link.name}</span>
-                    {link.badge && (
-                      <span className="px-1.5 py-0.2 bg-[#D4AF37] text-black text-[9px] font-black rounded">
-                        {link.badge}
-                      </span>
-                    )}
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-white/30" />
-                </a>
-              ))}
-            </div>
-          )}
+          <div className="flex flex-col space-y-1">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-4 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider text-white/80 hover:bg-white/5 hover:text-[#D4AF37] transition-colors flex items-center justify-between"
+              >
+                <span>{link.name}</span>
+                <ChevronRight className="w-4 h-4 text-white/30" />
+              </a>
+            ))}
+          </div>
 
           <div className="pt-3 border-t border-white/10 space-y-2">
-            {user && user.role === 'admin' && (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenAdmin();
-                }}
-                className="w-full py-2.5 rounded-none bg-red-500/10 border border-red-500/30 text-red-400 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
-              >
-                <ShieldAlert className="w-4 h-4" /> Admin Portal
-              </button>
-            )}
-
             {!user ? (
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
                   onOpenAuth();
                 }}
-                className="w-full py-3 rounded-none bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-black font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-black font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
               >
                 <User className="w-4 h-4" /> Athlete Login / Sign Up
               </button>
             ) : (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenProfile();
-                }}
-                className="w-full py-3 rounded-none bg-zinc-900 border border-[#D4AF37] text-[#D4AF37] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
-              >
-                <User className="w-4 h-4" /> My Athlete Profile
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenProfile();
+                  }}
+                  className="w-full py-3 rounded-xl bg-zinc-900 border border-[#D4AF37] text-[#D4AF37] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+                >
+                  <User className="w-4 h-4" /> My Profile
+                </button>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    if (onLogout) onLogout();
+                  }}
+                  className="w-full py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" /> Sign Out
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -220,4 +274,3 @@ export const Navbar = ({
     </header>
   );
 };
-

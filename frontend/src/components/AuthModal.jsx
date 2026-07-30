@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   X,
   Lock,
@@ -13,8 +14,11 @@ import {
   ShieldCheck,
   Smartphone,
   RefreshCw,
+  AlertCircle,
+  Sparkles,
 } from 'lucide-react';
 import { apiService } from '../services/api';
+import { OtpBoxInput } from './OtpBoxInput';
 
 export const AuthModal = ({
   isOpen,
@@ -22,247 +26,253 @@ export const AuthModal = ({
   onSuccess,
   initialTab = 'signup',
 }) => {
+  const navigate = useNavigate();
   const [tab, setTab] = useState(initialTab); // 'signup' | 'login' | 'forgot'
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
 
-  // Form inputs
+  // Form State
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [goal, setGoal] = useState('Muscle Building & Hypertrophy');
-  const [role, setRole] = useState('user'); // 'user' | 'admin' | 'staff'
 
-  // Forgot password & OTP state
-  const [otpMethod, setOtpMethod] = useState('email'); // 'email' | 'phone'
+  // OTP Forgot Password State
+  // otpStep 1: Enter Email/Phone
+  // otpStep 2: Enter & Verify 6-digit OTP (6 Boxes)
+  // otpStep 3: Reset Password (ONLY accessible after OTP verification succeeds)
+  // otpStep 4: Success confirmation
+  const [otpStep, setOtpStep] = useState(1);
   const [recoveryTarget, setRecoveryTarget] = useState('');
-  const [otpStep, setOtpStep] = useState(1); // 1: Send OTP, 2: Enter OTP & New Pass, 3: Success
   const [otpCode, setOtpCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [demoOtp, setDemoOtp] = useState('');
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
+
+  // Countdown timer for Resend OTP (60s)
   const [countdown, setCountdown] = useState(0);
 
-  // UI state
+  // Status State
+  const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [signupSuccess, setSignupSuccess] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
-      setTab(initialTab || 'signup');
-      setErrorMsg(null);
-      setSuccessMsg(null);
-      setSignupSuccess(false);
-      setOtpStep(1);
-      setOtpCode('');
-      setNewPassword('');
-      setConfirmPassword('');
-      setDemoOtp('');
-    }
-  }, [isOpen, initialTab]);
+    setTab(initialTab);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    setOtpStep(1);
+    setOtpCode('');
+    setIsOtpVerified(false);
+  }, [initialTab, isOpen]);
 
-  // Countdown timer for OTP resend
+  // Handle 60s Resend OTP Timer
   useEffect(() => {
     let timer;
     if (countdown > 0) {
-      timer = setInterval(() => setCountdown((prev) => prev - 1), 1000);
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
     }
     return () => clearInterval(timer);
   }, [countdown]);
 
   if (!isOpen) return null;
 
-  // Handle Login / Signup submit
+  // Handle Signup / Login Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg(null);
     setSuccessMsg(null);
-
-    if (tab === 'signup') {
-      if (!name || !email || !password) {
-        setErrorMsg('Please complete all required fields (Name, Email, and Password).');
-        return;
-      }
-      if (password.length < 6) {
-        setErrorMsg('Password must be at least 6 characters long.');
-        return;
-      }
-    } else if (tab === 'login') {
-      if (!email || !password) {
-        setErrorMsg('Please enter your email or mobile number and password.');
-        return;
-      }
-    }
-
     setLoading(true);
 
     try {
       if (tab === 'signup') {
-        await apiService.signup({ name, email, phone, password, goal, role });
-        setSignupSuccess(true);
+        const result = await apiService.signup({
+          name,
+          email,
+          phone,
+          password,
+          fitnessGoal: goal,
+        });
+        setSuccessMsg('Account created successfully! Welcome to Xclusive.');
         setTimeout(() => {
-          setSignupSuccess(false);
-          setTab('login');
-        }, 1300);
-      } else {
-        const user = await apiService.login({ email, password, role });
-        onSuccess(user);
-        onClose();
+          onSuccess(result.user || { name, email, membershipPlan: 'VIP PRO PASS' });
+        }, 800);
+      } else if (tab === 'login') {
+        const loggedUser = await apiService.login({
+          email,
+          password,
+        });
+        setSuccessMsg('Authentication successful!');
+        setTimeout(() => {
+          onSuccess(loggedUser);
+        }, 500);
       }
     } catch (err) {
-      console.error('Auth API Error:', err);
-      setErrorMsg(err.message || 'Authentication failed. Please check your credentials.');
+      console.error('Auth Error:', err);
+      setErrorMsg(err.message || 'Authentication request failed.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Step 1: Send OTP to Email or Mobile
+  // Step 1: Send OTP to User Email/Phone
   const handleSendOtp = async (e) => {
-    e.preventDefault();
-    setErrorMsg(null);
-    setSuccessMsg(null);
-
-    if (!recoveryTarget.trim()) {
-      setErrorMsg(
-        otpMethod === 'phone'
-          ? 'Please enter your registered mobile number.'
-          : 'Please enter your registered email address.'
-      );
+    if (e) e.preventDefault();
+    if (!recoveryTarget) {
+      setErrorMsg('Please enter your registered email address or mobile number.');
       return;
     }
 
     setLoading(true);
-    try {
-      const res = await apiService.sendOtp({
-        recoveryTarget: recoveryTarget.trim(),
-        method: otpMethod,
-      });
+    setErrorMsg(null);
+    setSuccessMsg(null);
 
-      setSuccessMsg(res.message || `OTP sent to your ${otpMethod}.`);
-      if (res.demoOtp) {
-        setDemoOtp(res.demoOtp);
-      }
+    try {
+      const res = await apiService.sendOtp({ recoveryTarget: recoveryTarget.trim() });
+      setSuccessMsg(res.message || 'Verification OTP code dispatched to your email address.');
+      setCountdown(60); // 60s countdown timer
       setOtpStep(2);
-      setCountdown(45);
     } catch (err) {
       console.error('Send OTP Error:', err);
-      setErrorMsg(err.message || 'Failed to send OTP code. Please check your details.');
+      setErrorMsg(err.message || 'Failed to send OTP code.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Step 2: Verify OTP & Reset Password
-  const handleVerifyOtpAndReset = async (e) => {
-    e.preventDefault();
-    setErrorMsg(null);
-    setSuccessMsg(null);
+  // Resend OTP Click
+  const handleResendOtp = async () => {
+    if (countdown > 0 || loading) return;
+    setOtpCode('');
+    await handleSendOtp(null);
+  };
 
-    if (!otpCode.trim()) {
-      setErrorMsg('Please enter the 6-digit OTP code.');
+  // Step 2: Verify OTP Only (Gates access to Step 3 Password Reset)
+  const handleVerifyOtpOnly = async (e) => {
+    e.preventDefault();
+    if (!otpCode || otpCode.trim().length !== 6) {
+      setErrorMsg('Please enter the complete 6-digit verification code.');
+      return;
+    }
+
+    setLoading(true);
+    setErrorMsg(null);
+
+    try {
+      await apiService.verifyUserOtp({
+        recoveryTarget: recoveryTarget.trim(),
+        otp: otpCode.trim(),
+      });
+      setIsOtpVerified(true);
+      setSuccessMsg('OTP verified successfully! Create your new password.');
+      setOtpStep(3); // Navigate to Reset Password step ONLY on success!
+    } catch (err) {
+      console.error('Verify OTP Error:', err);
+      setErrorMsg(err.message || 'Invalid or expired OTP code. Please check the digits and try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Step 3: Save New Password (Only accessible when isOtpVerified is true)
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!isOtpVerified) {
+      setErrorMsg('OTP verification required before resetting password.');
+      setOtpStep(2);
       return;
     }
 
     if (!newPassword) {
-      setErrorMsg('Please enter a new password.');
+      setErrorMsg('Please enter your new password.');
       return;
     }
-
     if (newPassword.length < 6) {
       setErrorMsg('New password must be at least 6 characters long.');
       return;
     }
-
     if (newPassword !== confirmPassword) {
-      setErrorMsg('Passwords do not match. Please re-enter.');
+      setErrorMsg('Passwords do not match. Please re-enter passwords.');
       return;
     }
 
     setLoading(true);
+    setErrorMsg(null);
+
     try {
-      const res = await apiService.verifyOtpAndResetPassword({
+      await apiService.verifyOtpAndResetPassword({
         recoveryTarget: recoveryTarget.trim(),
         otp: otpCode.trim(),
         newPassword,
       });
-
-      setSuccessMsg(res.message || 'Password reset successfully!');
-      setOtpStep(3);
+      setOtpStep(4); // Success step
     } catch (err) {
-      console.error('Verify OTP Error:', err);
-      setErrorMsg(err.message || 'Invalid or expired OTP code.');
+      console.error('Reset Password Error:', err);
+      setErrorMsg(err.message || 'Failed to save new password. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleSocialAuth = (provider) => {
-    setLoading(true);
+    const mockUser = {
+      name: `${provider} Athlete`,
+      email: `athlete.${provider.toLowerCase()}@xclusive.com`,
+      membershipPlan: 'VIP PRO PASS',
+      savedPlans: [],
+    };
+    setSuccessMsg(`Authenticated via ${provider}! Logging in...`);
     setTimeout(() => {
-      setLoading(false);
-      const userProfile = {
-        id: 'usr_social_' + Math.random().toString(36).substring(2, 9),
-        name: `Athlete (${provider})`,
-        email: `athlete.${provider.toLowerCase()}@xclusivegym.com`,
-        phone: '+1 (555) 019-2834',
-        membershipPlan: 'PRO ATHLETE PASS',
-        joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        savedPlans: [],
-      };
-      onSuccess(userProfile);
-      onClose();
+      onSuccess(mockUser);
     }, 600);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md bg-zinc-950 border border-[#D4AF37]/30 rounded-3xl p-6 sm:p-8 shadow-2xl text-white max-h-[90vh] overflow-y-auto">
-        {/* Close button */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
+      <div className="relative w-full max-w-md bg-zinc-950 border border-[#D4AF37]/30 rounded-3xl p-6 sm:p-8 shadow-2xl text-white">
+        {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full bg-black/50 border border-white/10 text-white/50 hover:text-white transition-colors cursor-pointer"
+          className="absolute top-5 right-5 p-2 rounded-full bg-black/50 border border-white/10 text-white/50 hover:text-white transition-colors cursor-pointer z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
-        {/* Brand Header */}
+        {/* Modal Brand Header */}
         <div className="text-center mb-6">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-zinc-950 border-2 border-[#D4AF37] p-1.5 flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(212,175,55,0.4)] overflow-hidden">
+          <div className="w-14 h-14 rounded-full bg-zinc-950 border-2 border-[#D4AF37] p-1.5 flex items-center justify-center mx-auto mb-3 shadow-[0_0_20px_rgba(212,175,55,0.3)] overflow-hidden">
             <img
               src="/Xclusivelogo.png"
               alt="Xclusive Gym"
-              className="w-full h-full object-contain rounded-full brightness-110 contrast-125"
+              className="w-full h-full object-contain rounded-full"
             />
           </div>
-          <h3 className="text-2xl font-black italic uppercase tracking-tight text-white">
-            XCLUSIVE <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16]">ATHLETE PORTAL</span>
+          <h3 className="text-xl font-black italic uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16]">
+            XCLUSIVE ATHLETE PORTAL
           </h3>
           <p className="text-xs text-white/50 mt-1">
-            {tab === 'signup'
-              ? 'Create your athlete account to get started'
-              : tab === 'login'
-              ? 'Access your training plans & membership'
-              : 'Password Recovery via Email or Mobile OTP'}
+            {tab === 'signup' && 'Create your athlete account to access plans & scheduling'}
+            {tab === 'login' && 'Log in with your athlete credentials'}
+            {tab === 'forgot' && 'Account Recovery & Password Verification'}
           </p>
         </div>
 
         {/* Navigation Tabs (Signup / Login) */}
         {tab !== 'forgot' && (
-          <div className="grid grid-cols-2 p-1 bg-black border border-white/10 rounded-xl mb-6">
+          <div className="flex bg-black border border-white/10 rounded-2xl p-1 mb-6">
             <button
               onClick={() => {
                 setTab('signup');
                 setErrorMsg(null);
                 setSuccessMsg(null);
               }}
-              className={`py-2 text-xs font-black uppercase tracking-widest transition-all rounded-lg cursor-pointer ${
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                 tab === 'signup'
-                  ? 'bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black shadow'
-                  : 'text-white/40 hover:text-white'
+                  ? 'bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black shadow-md'
+                  : 'text-white/60 hover:text-white'
               }`}
             >
               Sign Up
@@ -273,106 +283,53 @@ export const AuthModal = ({
                 setErrorMsg(null);
                 setSuccessMsg(null);
               }}
-              className={`py-2 text-xs font-black uppercase tracking-widest transition-all rounded-lg cursor-pointer ${
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                 tab === 'login'
-                  ? 'bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black shadow'
-                  : 'text-white/40 hover:text-white'
+                  ? 'bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black shadow-md'
+                  : 'text-white/60 hover:text-white'
               }`}
             >
-              Log In
+              User Login
             </button>
           </div>
         )}
 
-        {/* Error / Success Notifications */}
+        {/* Global Error Banner */}
         {errorMsg && (
-          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium leading-relaxed">
-            {errorMsg}
+          <div className="mb-4 p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-red-400 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{errorMsg}</span>
           </div>
         )}
 
+        {/* Global Success Banner */}
         {successMsg && (
-          <div className="mb-4 p-3 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/40 text-[#F5D76E] text-xs font-medium leading-relaxed flex items-start gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
+          <div className="mb-4 p-3 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37] text-[#F5D76E] text-xs flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0 text-[#D4AF37]" />
             <span>{successMsg}</span>
           </div>
         )}
 
-        {signupSuccess && (
-          <div className="mb-4 p-3.5 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37] text-[#F5D76E] text-xs font-bold flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#D4AF37]" />
-            Registration successful! Directing to Login now...
-          </div>
-        )}
-
         {/* ========================================================= */}
-        {/* FORGOT PASSWORD VIEW (OTP VIA EMAIL OR MOBILE) */}
+        {/* FORGOT PASSWORD MODAL TAB (MATCHES ADMIN OTP PAGE DESIGN)  */}
         {/* ========================================================= */}
         {tab === 'forgot' ? (
           <div className="space-y-4">
-            {/* STEP 1: Select Email/Mobile & Enter Target */}
+            {/* STEP 1: Enter Email/Phone */}
             {otpStep === 1 && (
               <form onSubmit={handleSendOtp} className="space-y-4">
-                {/* Delivery Method Selector */}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-2">
-                    Send OTP Code Via
-                  </label>
-                  <div className="grid grid-cols-2 gap-2 p-1 bg-black border border-white/10 rounded-xl">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setOtpMethod('email');
-                        setErrorMsg(null);
-                      }}
-                      className={`py-2 px-3 text-xs font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                        otpMethod === 'email'
-                          ? 'bg-[#D4AF37]/20 border border-[#D4AF37] text-[#F5D76E]'
-                          : 'text-white/40 hover:text-white'
-                      }`}
-                    >
-                      <Mail className="w-3.5 h-3.5" />
-                      Email
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setOtpMethod('phone');
-                        setErrorMsg(null);
-                      }}
-                      className={`py-2 px-3 text-xs font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                        otpMethod === 'phone'
-                          ? 'bg-[#D4AF37]/20 border border-[#D4AF37] text-[#F5D76E]'
-                          : 'text-white/40 hover:text-white'
-                      }`}
-                    >
-                      <Smartphone className="w-3.5 h-3.5" />
-                      Mobile Number
-                    </button>
-                  </div>
-                </div>
-
-                {/* Target Input */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1.5">
-                    {otpMethod === 'email' ? 'Registered Email Address' : 'Registered Mobile Number'}
+                    User Email Address or Mobile <span className="text-[#D4AF37]">*</span>
                   </label>
                   <div className="relative">
-                    {otpMethod === 'email' ? (
-                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                    ) : (
-                      <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                    )}
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
                     <input
-                      type={otpMethod === 'email' ? 'email' : 'tel'}
+                      type="text"
                       required
                       value={recoveryTarget}
                       onChange={(e) => setRecoveryTarget(e.target.value)}
-                      placeholder={
-                        otpMethod === 'email'
-                          ? 'athlete@xclusivegym.com'
-                          : '+1 (555) 000-1234 or 9876543210'
-                      }
+                      placeholder="athlete@xclusivegym.com"
                       className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
                     />
                   </div>
@@ -381,10 +338,16 @@ export const AuthModal = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/10"
+                  className="w-full py-3.5 bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/10 rounded-xl"
                 >
-                  {loading ? 'Sending OTP Code...' : 'Send OTP Code'}
-                  {!loading && <ArrowRight className="w-4 h-4" />}
+                  {loading ? (
+                    <span>Dispatching OTP...</span>
+                  ) : (
+                    <>
+                      <span>Generate Verification OTP</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
                 </button>
 
                 <div className="text-center pt-2">
@@ -396,67 +359,90 @@ export const AuthModal = ({
                     }}
                     className="text-xs text-white/50 hover:text-[#F5D76E] transition-colors cursor-pointer"
                   >
-                    ← Back to Log In
+                    ← Back to User Login
                   </button>
                 </div>
               </form>
             )}
 
-            {/* STEP 2: Enter OTP Code & Set New Password */}
+            {/* STEP 2: Enter & Verify 6-digit OTP (6 SEPARATE INPUT BOXES) */}
             {otpStep === 2 && (
-              <form onSubmit={handleVerifyOtpAndReset} className="space-y-4">
-                {/* Demo OTP Banner if present */}
-                {demoOtp && (
-                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono text-center">
-                    ⚡ DEMO VERIFICATION OTP CODE: <span className="font-black text-sm tracking-widest text-[#F5D76E]">{demoOtp}</span>
-                  </div>
-                )}
-
+              <form onSubmit={handleVerifyOtpOnly} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1.5">
-                    Enter 6-Digit OTP Code
-                  </label>
-                  <div className="relative">
-                    <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D4AF37]" />
-                    <input
-                      type="text"
-                      maxLength={6}
-                      required
-                      value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value)}
-                      placeholder="123456"
-                      className="w-full pl-10 pr-4 py-3 bg-black border border-[#D4AF37]/50 rounded-xl text-white text-base tracking-[0.3em] font-mono text-center focus:outline-none focus:border-[#D4AF37]"
-                    />
-                  </div>
-                  <div className="flex justify-between items-center mt-1.5 text-[11px] text-white/40">
-                    <span>Sent to {recoveryTarget}</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-white/70">
+                      6-Digit Verification OTP <span className="text-[#D4AF37]">*</span>
+                    </label>
                     {countdown > 0 ? (
-                      <span>Resend code in {countdown}s</span>
+                      <span className="text-[11px] font-mono text-[#F5D76E]">
+                        Resend in {countdown}s
+                      </span>
                     ) : (
                       <button
                         type="button"
-                        onClick={handleSendOtp}
-                        className="text-[#F5D76E] hover:underline cursor-pointer flex items-center gap-1 font-semibold"
+                        onClick={handleResendOtp}
+                        disabled={loading}
+                        className="text-xs text-[#D4AF37] hover:text-[#F5D76E] font-bold transition-colors cursor-pointer flex items-center gap-1"
                       >
                         <RefreshCw className="w-3 h-3" /> Resend OTP
                       </button>
                     )}
                   </div>
+
+                  {/* 6 SEPARATE BOX INPUT COMPONENT */}
+                  <OtpBoxInput
+                    value={otpCode}
+                    onChange={(val) => {
+                      setOtpCode(val);
+                      if (errorMsg) setErrorMsg(null);
+                    }}
+                    disabled={loading}
+                    error={!!errorMsg}
+                  />
                 </div>
 
-                {/* New Password */}
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setOtpStep(1)}
+                    className="px-4 py-3 rounded-xl bg-black border border-white/10 text-xs font-bold text-white hover:bg-white/10 transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    <ArrowLeft className="w-4 h-4" /> Back
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading || otpCode.length !== 6}
+                    className="flex-1 py-3.5 bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/10 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <span>Verifying OTP...</span>
+                    ) : (
+                      <>
+                        <span>Verify Code & Continue</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* STEP 3: Reset Password (ONLY ACCESSIBLE AFTER OTP VERIFICATION SUCCEEDS) */}
+            {otpStep === 3 && isOtpVerified && (
+              <form onSubmit={handleResetPassword} className="space-y-4 animate-in fade-in duration-200">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1.5">
-                    New Password
+                    New User Password <span className="text-[#D4AF37]">*</span>
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
                     <input
                       type={showNewPassword ? 'text' : 'password'}
                       required
+                      minLength={6}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="••••••••••••"
+                      placeholder="Minimum 6 characters"
                       className="w-full pl-10 pr-10 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
                     />
                     <button
@@ -469,10 +455,9 @@ export const AuthModal = ({
                   </div>
                 </div>
 
-                {/* Confirm New Password */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1.5">
-                    Confirm New Password
+                    Confirm New Password <span className="text-[#D4AF37]">*</span>
                   </label>
                   <div className="relative">
                     <ShieldCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
@@ -481,7 +466,7 @@ export const AuthModal = ({
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="••••••••••••"
+                      placeholder="Re-enter password"
                       className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
                     />
                   </div>
@@ -490,28 +475,15 @@ export const AuthModal = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/10"
+                  className="w-full py-3.5 bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/10 rounded-xl"
                 >
-                  {loading ? 'Verifying & Resetting...' : 'Verify OTP & Reset Password'}
+                  {loading ? 'Updating Password...' : 'Save New Password'}
                 </button>
-
-                <div className="text-center pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setOtpStep(1);
-                      setErrorMsg(null);
-                    }}
-                    className="text-xs text-white/50 hover:text-[#F5D76E] transition-colors cursor-pointer"
-                  >
-                    Change Email / Mobile Number
-                  </button>
-                </div>
               </form>
             )}
 
-            {/* STEP 3: Password Reset Success */}
-            {otpStep === 3 && (
+            {/* STEP 4: Password Reset Success */}
+            {otpStep === 4 && (
               <div className="p-4 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37] text-center space-y-3">
                 <CheckCircle2 className="w-10 h-10 text-[#F5D76E] mx-auto" />
                 <h4 className="text-base font-black uppercase text-white">Password Updated!</h4>
@@ -529,7 +501,7 @@ export const AuthModal = ({
                   }}
                   className="mt-2 w-full py-3 bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black text-xs uppercase tracking-widest rounded-xl hover:opacity-90 cursor-pointer shadow-lg shadow-[#D4AF37]/10"
                 >
-                  Proceed to Log In
+                  Proceed to User Login
                 </button>
               </div>
             )}
@@ -539,36 +511,6 @@ export const AuthModal = ({
           /* SIGNUP / LOGIN FORMS */
           /* ========================================================= */
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* ROLE SELECTION (1. User / 2. Admin) */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-1.5">
-                Login Role Access
-              </label>
-              <div className="grid grid-cols-2 gap-2 p-1 bg-black border border-white/10 rounded-xl">
-                <button
-                  type="button"
-                  onClick={() => setRole('user')}
-                  className={`py-2.5 px-3 text-xs font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                    role === 'user'
-                      ? 'bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black shadow'
-                      : 'text-white/40 hover:text-white'
-                  }`}
-                >
-                  <User className="w-3.5 h-3.5" /> 1. User
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRole('admin')}
-                  className={`py-2.5 px-3 text-xs font-black uppercase tracking-wider rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                    role === 'admin'
-                      ? 'bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black shadow'
-                      : 'text-white/40 hover:text-white'
-                  }`}
-                >
-                  <ShieldCheck className="w-3.5 h-3.5" /> 2. Admin
-                </button>
-              </div>
-            </div>
             {/* SIGNUP: FULL NAME */}
             {tab === 'signup' && (
               <div>
@@ -686,11 +628,8 @@ export const AuthModal = ({
                 <button
                   type="button"
                   onClick={() => {
-                    setTab('forgot');
-                    setOtpStep(1);
-                    setRecoveryTarget(email || phone || '');
-                    setErrorMsg(null);
-                    setSuccessMsg(null);
+                    onClose();
+                    navigate('/forgot-password');
                   }}
                   className="text-[#F5D76E] hover:underline font-bold transition-colors cursor-pointer"
                 >
@@ -703,31 +642,37 @@ export const AuthModal = ({
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/10"
+              className="w-full py-4 bg-gradient-to-r from-[#F5D76E] via-[#D4AF37] to-[#9A6B16] text-black font-black text-xs uppercase tracking-widest hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/20 rounded-xl mt-2"
             >
-              {loading
-                ? 'Processing...'
-                : tab === 'signup'
-                ? 'Create Athlete Account'
-                : 'Log In to Portal'}
-              {!loading && <ArrowRight className="w-4 h-4" />}
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  <span>Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <span>{tab === 'signup' ? 'Create Athlete Account' : 'Log In to Portal'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </form>
         )}
 
-        {/* Social Authentication Divider */}
+        {/* SOCIAL AUTH SEPARATOR */}
         {tab !== 'forgot' && (
           <>
             <div className="relative my-6 text-center">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-white/10" />
               </div>
-              <span className="relative px-3 bg-zinc-950 text-[10px] font-bold uppercase tracking-widest text-white/30">
+              <span className="relative px-3 bg-zinc-950 text-[10px] text-white/40 uppercase font-bold tracking-widest">
                 Or Continue With
               </span>
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            {/* SOCIAL BUTTONS */}
+            <div className="grid grid-cols-3 gap-2.5">
               <button
                 onClick={() => handleSocialAuth('Google')}
                 className="py-2.5 bg-black border border-white/10 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:border-white/30 transition-all cursor-pointer"
@@ -749,6 +694,24 @@ export const AuthModal = ({
             </div>
           </>
         )}
+
+        {/* Admin Portal Redirect Link */}
+        <div className="mt-5 pt-4 border-t border-white/10 text-center">
+          <p className="text-[11px] text-white/40">
+            Gym Administrator?{' '}
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                navigate('/admin/login');
+              }}
+              className="text-[#D4AF37] hover:text-[#F5D76E] font-bold underline transition-colors cursor-pointer inline-flex items-center gap-1 ml-1"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
+              Admin Login →
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

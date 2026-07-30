@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { sendBrevoOtpEmail } from "../config/brevoEmail.js";
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || "your_jwt_secret_key_here_123456", {
@@ -12,37 +13,29 @@ const generateToken = (id) => {
 // @access  Public
 export const signup = async (req, res) => {
   try {
-    const { name, email, phone, password, goal, role } = req.body;
+    const { name, email, phone, password, goal } = req.body;
 
     if (!name || !email || !password) {
       res.status(400).json({ error: "Name, email, and password are required" });
       return;
     }
 
-    const userExists = await User.findOne({ email: email.toLowerCase() });
+    const cleanEmail = email.toLowerCase().trim();
+    const userExists = await User.findOne({ email: cleanEmail });
 
     if (userExists) {
       res.status(400).json({ error: "User with this email already exists" });
       return;
     }
 
-    const userRole = role && ["user", "staff", "admin"].includes(role) ? role : "user";
-
-    if (userRole === "admin") {
-      const currentAdminCount = await User.countDocuments({ role: "admin" });
-      if (currentAdminCount >= 2) {
-        res.status(403).json({ error: "Maximum limit of 2 Admin accounts reached. No additional admin accounts permitted." });
-        return;
-      }
-    }
-
+    // User signup ALWAYS creates a standard athlete user account (never admin)
     const user = await User.create({
       name,
-      email: email.toLowerCase(),
+      email: cleanEmail,
       phone: phone ? phone.trim() : "",
       password, // Will be hashed in User schema pre-save hook
       goal: goal || "Muscle Building & Hypertrophy",
-      role: userRole
+      role: "user"
     });
 
     if (user) {
@@ -54,7 +47,7 @@ export const signup = async (req, res) => {
           name: user.name,
           email: user.email,
           phone: user.phone,
-          role: user.role || "user",
+          role: "user",
           membershipPlan: user.membershipPlan,
           joinDate: user.joinDate,
           goal: user.goal,
@@ -70,12 +63,12 @@ export const signup = async (req, res) => {
   }
 };
 
-// @desc    Authenticate user & get token (auto-signup if doesn't exist)
+// @desc    Authenticate user & get token
 // @route   POST /api/auth/login
 // @access  Public
 export const login = async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       res.status(400).json({ error: "Email and password are required" });
@@ -98,32 +91,9 @@ export const login = async (req, res) => {
         res.status(401).json({ error: "Invalid email/phone or password" });
         return;
       }
-
-      // If user is attempting to log in as admin but is not yet an admin
-      if (role === "admin" && user.role !== "admin") {
-        const currentAdminCount = await User.countDocuments({ role: "admin" });
-        if (currentAdminCount >= 2) {
-          res.status(403).json({ error: "Maximum limit of 2 Admin accounts reached. No additional admin logins permitted." });
-          return;
-        }
-        user.role = "admin";
-        await user.save();
-      } else if (role && ["staff", "user"].includes(role) && user.role !== role && user.role !== "admin") {
-        user.role = role;
-        await user.save();
-      }
     } else {
-      // User doesn't exist, auto-signup with specified role or default
+      // User doesn't exist, auto-signup as normal user
       const name = email.includes("@") ? email.split("@")[0].toUpperCase() : "ATHLETE";
-      const userRole = role && ["user", "staff", "admin"].includes(role) ? role : "user";
-
-      if (userRole === "admin") {
-        const currentAdminCount = await User.countDocuments({ role: "admin" });
-        if (currentAdminCount >= 2) {
-          res.status(403).json({ error: "Maximum limit of 2 Admin accounts reached. No additional admin logins permitted." });
-          return;
-        }
-      }
 
       user = await User.create({
         name,
@@ -131,7 +101,7 @@ export const login = async (req, res) => {
         phone: !cleanInput.includes("@") ? cleanInput : "",
         password, // Hashed in pre-save hook
         goal: "Muscle Building & Hypertrophy",
-        role: userRole
+        role: "user"
       });
     }
 
@@ -143,7 +113,7 @@ export const login = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        role: user.role || "user",
+        role: "user",
         membershipPlan: user.membershipPlan,
         joinDate: user.joinDate,
         goal: user.goal,
@@ -219,17 +189,70 @@ export const sendOtp = async (req, res) => {
     user.resetOtpExpires = expiresAt;
     await user.save();
 
-    console.log(`[OTP Sent Successfully] Target: ${recoveryTarget} | Method: ${method} | OTP Code: ${otp}`);
+    // Dispatch email via Brevo SMTP / API
+    try {
+      if (user.email) {
+        await sendBrevoOtpEmail({
+          toEmail: user.email,
+          recipientName: user.name,
+          otp,
+          portalType: "USER",
+        });
+      }
+    } catch (mailErr) {
+      console.warn("[Brevo Email Notification Warning]", mailErr.message);
+    }
 
     res.json({
-      message: `OTP code sent to your ${method === 'phone' ? 'mobile number' : 'email address'}.`,
-      target: recoveryTarget,
-      method: method || 'email',
-      demoOtp: otp // Returned for easy testing and demonstration in UI
+      message: `Security OTP code has been dispatched to your email address.`,
+      target: user.email,
+      otpCode: otp // Demo fallback for local testing
     });
   } catch (error) {
     console.error("[Send OTP Error]", error);
     res.status(500).json({ error: error.message || "Failed to send OTP" });
+  }
+};
+
+// @desc    Verify OTP code only (Step 3: Verification prior to password reset)
+// @route   POST /api/auth/verify-otp
+// @access  Public
+export const verifyOtpOnly = async (req, res) => {
+  try {
+    const { recoveryTarget, otp } = req.body;
+
+    if (!recoveryTarget || !otp) {
+      return res.status(400).json({ error: "Email and 6-digit OTP code are required." });
+    }
+
+    const cleanTarget = recoveryTarget.trim().toLowerCase();
+
+    const user = await User.findOne({
+      $or: [
+        { email: cleanTarget },
+        { phone: recoveryTarget.trim() }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User account not found." });
+    }
+
+    if (!user.resetOtp || user.resetOtp !== otp.trim()) {
+      return res.status(400).json({ error: "Invalid OTP code. Please verify the code and try again." });
+    }
+
+    if (!user.resetOtpExpires || new Date() > new Date(user.resetOtpExpires)) {
+      return res.status(400).json({ error: "OTP code has expired. Please request a new verification code." });
+    }
+
+    return res.json({
+      success: true,
+      message: "OTP code verified successfully. You can now reset your password."
+    });
+  } catch (error) {
+    console.error("[Verify OTP Only Error]", error);
+    return res.status(500).json({ error: error.message || "Failed to verify OTP code." });
   }
 };
 
