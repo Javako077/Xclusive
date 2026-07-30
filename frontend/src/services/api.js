@@ -1,4 +1,19 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  const isLocalHost = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+
+  if (!isLocalHost && (!envUrl || envUrl.includes("localhost"))) {
+    console.error(
+      "[Xclusive API Warning] The frontend is deployed at " + window.location.origin + 
+      " but API_BASE_URL is pointing to localhost. Browsers block public HTTPS origins from accessing local loopback addresses." +
+      " Please set VITE_API_BASE_URL in your Vercel Project Settings to your deployed backend URL."
+    );
+  }
+
+  return envUrl || "http://localhost:3000";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 const getHeaders = () => {
   const headers = { "Content-Type": "application/json" };
