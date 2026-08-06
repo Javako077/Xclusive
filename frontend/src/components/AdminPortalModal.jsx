@@ -932,9 +932,9 @@ export const AdminPortalModal = ({ isOpen, onClose, currentUser, onLogout }) => 
                 <div className="p-5 bg-black border border-white/10 rounded-2xl space-y-4">
                   <div className="flex items-center justify-between">
                     <h5 className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
-                      <BarChart3 className="w-4 h-4 text-[#F5D76E]" /> Monthly Revenue Velocity ($)
+                      <BarChart3 className="w-4 h-4 text-[#F5D76E]" /> Monthly Revenue Velocity (₹)
                     </h5>
-                    <span className="text-xs text-[#F5D76E] font-bold">YTD Total: $55,600</span>
+                    <span className="text-xs text-[#F5D76E] font-bold">YTD Total: ₹55,600</span>
                   </div>
 
                   <div className="h-44 flex items-end justify-between gap-3 pt-6 px-4 border-b border-white/10">
@@ -951,7 +951,7 @@ export const AdminPortalModal = ({ isOpen, onClose, currentUser, onLogout }) => 
                       return (
                         <div key={item.month} className="flex-1 flex flex-col items-center gap-2 group">
                           <span className="text-[10px] text-[#F5D76E] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                            ${item.revenue}
+                            ₹{item.revenue}
                           </span>
                           <div
                             style={{ height: `${heightPercent}%` }}

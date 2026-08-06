@@ -234,10 +234,10 @@ export const MEMBERSHIP_PLANS = [
     name: 'Xclusive Club Access',
     tagline: 'For independent trainers and casual fitness enthusiasts.',
     prices: {
-      '1 Month': 49,
-      '3 Months': 44,
-      '6 Months': 39,
-      '12 Months': 34,
+      '1 Month': 10000,
+      '3 Months': 27000,
+      '6 Months': 55000,
+      '12 Months': 110000,
     },
     features: [
       'Full Gym Floor & Cardio Equipment',
@@ -254,10 +254,10 @@ export const MEMBERSHIP_PLANS = [
     badge: 'MOST POPULAR',
     tagline: 'Unlimited class access, recovery suite, and trainer perks.',
     prices: {
-      '1 Month': 89,
-      '3 Months': 79,
-      '6 Months': 69,
-      '12 Months': 59,
+      '1 Month': 10000,
+      '3 Months': 27000,
+      '6 Months': 55000,
+      '12 Months': 110000,
     },
     popular: true,
     features: [
@@ -276,10 +276,10 @@ export const MEMBERSHIP_PLANS = [
     badge: 'ALL-INCLUSIVE',
     tagline: 'Personal training, cryotherapy, custom nutrition & VIP lounge.',
     prices: {
-      '1 Month': 159,
-      '3 Months': 144,
-      '6 Months': 129,
-      '12 Months': 114,
+      '1 Month': 10000,
+      '3 Months': 27000,
+      '6 Months': 55000,
+      '12 Months': 110000,
     },
     features: [
       'Everything in Pro Athlete',

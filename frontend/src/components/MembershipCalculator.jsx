@@ -7,8 +7,8 @@ export const CHOOSE_YOUR_PLANS = [
     name: 'Monthly Plan',
     badge: 'FLEXIBLE',
     tagline: 'Full gym access with zero long-term commitment.',
-    priceText: '$100 / month',
-    amount: 100,
+    priceText: '₹10,000 / month',
+    amount: 10000,
     term: '1 Month',
     features: [
       'Full Gym Floor & Strength Equipment',
@@ -21,10 +21,10 @@ export const CHOOSE_YOUR_PLANS = [
   {
     id: 'plan-quarterly',
     name: 'Quarterly Plan',
-    badge: 'SAVE $50',
+    badge: 'SAVE ₹3,000',
     tagline: 'Ideal for 90-day physical transformations.',
-    priceText: '$250 / 3 months',
-    amount: 250,
+    priceText: '₹27,000 / 3 months',
+    amount: 27000,
     term: '3 Months',
     features: [
       'Everything in Monthly Plan',
@@ -37,10 +37,10 @@ export const CHOOSE_YOUR_PLANS = [
   {
     id: 'plan-half-yearly',
     name: 'Half Yearly Plan',
-    badge: 'POPULAR • SAVE $150',
+    badge: 'POPULAR • SAVE ₹5,000',
     tagline: 'Consistent athletic development over 6 months.',
-    priceText: '$450 / 6 months',
-    amount: 450,
+    priceText: '₹55,000 / 6 months',
+    amount: 55000,
     term: '6 Months',
     popular: true,
     features: [
@@ -54,11 +54,11 @@ export const CHOOSE_YOUR_PLANS = [
   {
     id: 'plan-yearly',
     name: 'Yearly Plan',
-    badge: 'BEST VALUE • SAVE $500',
+    badge: 'BEST VALUE • SAVE ₹10,000',
     tagline: 'Complete 365-day lifestyle & physical mastery.',
-    priceText: '$700 / year',
-    amount: 700,
-    term: 'Yearly',
+    priceText: '₹1,10,000 / year',
+    amount: 110000,
+    term: '1 Year',
     features: [
       'Everything in Half Yearly Plan',
       '4x Personal Trainer Sessions Per Year',
@@ -101,7 +101,10 @@ export const MembershipCalculator = ({ onJoinPlan, onBookTrial }) => {
             return (
               <div
                 key={plan.id}
-                onClick={() => setSelectedPlan(plan)}
+                onClick={() => {
+                  setSelectedPlan(plan);
+                  if (onJoinPlan) onJoinPlan(plan);
+                }}
                 className={`rounded-3xl p-8 border transition-all duration-300 flex flex-col justify-between cursor-pointer relative ${
                   isSelected
                     ? 'bg-zinc-950 border-[#D4AF37] shadow-2xl shadow-[#D4AF37]/20 scale-[1.02]'
