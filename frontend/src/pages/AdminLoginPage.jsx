@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Shield, Lock, Mail, Eye, EyeOff, KeyRound, AlertCircle, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { apiService } from '../services/api';
+import { toast } from 'react-toastify';
 
 export const AdminLoginPage = ({ onAdminLoginSuccess }) => {
   const [email, setEmail] = useState('');
@@ -17,6 +18,7 @@ export const AdminLoginPage = ({ onAdminLoginSuccess }) => {
     e.preventDefault();
     if (!email || !password) {
       setError('Please fill in both Email and Password fields.');
+      toast.error('Please fill in both Email and Password fields.');
       return;
     }
 
@@ -28,10 +30,13 @@ export const AdminLoginPage = ({ onAdminLoginSuccess }) => {
       if (onAdminLoginSuccess) {
         onAdminLoginSuccess(res.admin);
       }
+      toast.success('Admin authentication successful! Access granted.');
       navigate('/admin/dashboard');
     } catch (err) {
       console.error('Admin Login Error:', err);
-      setError(err.message || 'Email or password wrong.');
+      const msg = err.message || 'Email or password wrong.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

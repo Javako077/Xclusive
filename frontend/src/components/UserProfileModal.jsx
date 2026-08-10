@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Bookmark, LogOut, Calendar, Award, Trash2 } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 export const UserProfileModal = ({
   isOpen,
@@ -83,7 +84,7 @@ export const UserProfileModal = ({
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-2xl font-black italic uppercase text-white">{displayUser.name}</h3>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37] text-[#D4AF37] text-[9px] font-black uppercase tracking-widest">
+                  <span className="px-2 py-2 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37] text-[#D4AF37] text-[9px] font-black uppercase tracking-widest">
                     VERIFIED ATHLETE
                   </span>
                 </div>
@@ -129,7 +130,10 @@ export const UserProfileModal = ({
                       </div>
                       {onDeleteSavedPlan && (
                         <button
-                          onClick={() => onDeleteSavedPlan(plan.id)}
+                          onClick={() => {
+                            onDeleteSavedPlan(plan.id);
+                            toast.info(`Removed plan "${plan.title}"`);
+                          }}
                           className="p-1.5 rounded-lg bg-zinc-900 text-white/40 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
                           title="Delete Plan"
                         >
@@ -149,6 +153,7 @@ export const UserProfileModal = ({
               </div>
               <button
                 onClick={() => {
+                  toast.info('Signed out of Xclusive session.');
                   onLogout();
                   onClose();
                 }}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminPortalModal } from '../components/AdminPortalModal';
 import { apiService } from '../services/api';
+import { toast } from 'react-toastify';
 
 export const AdminDashboardPage = ({ currentAdmin, setAdmin }) => {
   const [adminUser, setAdminUser] = useState(currentAdmin || null);
@@ -38,6 +39,7 @@ export const AdminDashboardPage = ({ currentAdmin, setAdmin }) => {
   }, [currentAdmin, navigate, setAdmin]);
 
   const handleLogout = () => {
+    toast.info('Admin session ended.');
     apiService.adminLogout();
     if (setAdmin) setAdmin(null);
     navigate('/admin/login');

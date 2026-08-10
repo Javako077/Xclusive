@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, User, Mail, Phone, Sparkles, CheckCircle2, ArrowRight, ShieldCheck, CreditCard } from 'lucide-react';
 import { apiService } from '../services/api';
+import { toast } from 'react-toastify';
 
 const INITIAL_10_SLOTS = [
   // Morning Slots (5:00 AM - 10:00 AM)
@@ -84,8 +85,9 @@ export const BookTrialModal = ({ isOpen, onClose, user }) => {
         );
       }
       setSubmitted(true);
+      toast.success('   Free Trial session booked successfully!');
     } catch (err) {
-      alert(err.message || 'Slot overbooking prevented by backend concurrency check.');
+      toast.error(err.message || 'Slot overbooking prevented by backend concurrency check.');
     } finally {
       setLoading(false);
     }
@@ -140,7 +142,7 @@ export const BookTrialModal = ({ isOpen, onClose, user }) => {
             <div className="text-center mb-6">
               <div className="inline-block mb-2">
                 <span className="text-[#D4AF37] text-[10px] font-bold tracking-[0.3em] uppercase border-l-2 border-[#D4AF37] pl-2 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" /> VIP Guest Experience
+                  <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" /> XCLUSIVE Experience
                 </span>
               </div>
               <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">
@@ -173,7 +175,7 @@ export const BookTrialModal = ({ isOpen, onClose, user }) => {
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="e.g. Alex Mercer"
+                    placeholder="Full Name"
                     className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
@@ -192,7 +194,7 @@ export const BookTrialModal = ({ isOpen, onClose, user }) => {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="alex@example.com"
+                      placeholder="email@example.com"
                       className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
                     />
                   </div>
@@ -209,7 +211,7 @@ export const BookTrialModal = ({ isOpen, onClose, user }) => {
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 98765 43210"
+                      placeholder="+91 0000000000"
                       className="w-full pl-10 pr-4 py-3 bg-black border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-[#D4AF37]"
                     />
                   </div>

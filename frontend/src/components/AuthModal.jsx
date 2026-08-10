@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import {
   X,
   Lock,
@@ -97,6 +98,7 @@ export const AuthModal = ({
           fitnessGoal: goal,
         });
         setSuccessMsg('Account created successfully! Welcome to Xclusive.');
+        toast.success('Account created successfully! Welcome to Xclusive.');
         setTimeout(() => {
           onSuccess(result.user || { name, email, membershipPlan: 'VIP PRO PASS' });
         }, 800);
@@ -106,6 +108,7 @@ export const AuthModal = ({
           password,
         });
         setSuccessMsg('Authentication successful!');
+        toast.success('Welcome back! Logged in successfully.');
         setTimeout(() => {
           onSuccess(loggedUser);
         }, 500);
@@ -113,6 +116,7 @@ export const AuthModal = ({
     } catch (err) {
       console.error('Auth Error:', err);
       setErrorMsg(err.message || 'Authentication request failed.');
+      toast.error(err.message || 'Authentication request failed.');
     } finally {
       setLoading(false);
     }
@@ -123,6 +127,7 @@ export const AuthModal = ({
     if (e) e.preventDefault();
     if (!recoveryTarget) {
       setErrorMsg('Please enter your registered email address or mobile number.');
+      toast.error('Please enter your registered email address or mobile number.');
       return;
     }
 
@@ -132,12 +137,15 @@ export const AuthModal = ({
 
     try {
       const res = await apiService.sendOtp({ recoveryTarget: recoveryTarget.trim() });
-      setSuccessMsg(res.message || 'Verification OTP code dispatched to your email address.');
+      const msg = res.message || 'Verification OTP code dispatched to your email address.';
+      setSuccessMsg(msg);
+      toast.info(msg);
       setCountdown(60); // 60s countdown timer
       setOtpStep(2);
     } catch (err) {
       console.error('Send OTP Error:', err);
       setErrorMsg(err.message || 'Failed to send OTP code.');
+      toast.error(err.message || 'Failed to send OTP code.');
     } finally {
       setLoading(false);
     }
@@ -155,6 +163,7 @@ export const AuthModal = ({
     e.preventDefault();
     if (!otpCode || otpCode.trim().length !== 6) {
       setErrorMsg('Please enter the complete 6-digit verification code.');
+      toast.error('Please enter the complete 6-digit verification code.');
       return;
     }
 
@@ -168,10 +177,12 @@ export const AuthModal = ({
       });
       setIsOtpVerified(true);
       setSuccessMsg('OTP verified successfully! Create your new password.');
+      toast.success('OTP verified successfully! Create your new password.');
       setOtpStep(3); // Navigate to Reset Password step ONLY on success!
     } catch (err) {
       console.error('Verify OTP Error:', err);
       setErrorMsg(err.message || 'Invalid or expired OTP code. Please check the digits and try again.');
+      toast.error(err.message || 'Invalid or expired OTP code.');
     } finally {
       setLoading(false);
     }
@@ -182,20 +193,24 @@ export const AuthModal = ({
     e.preventDefault();
     if (!isOtpVerified) {
       setErrorMsg('OTP verification required before resetting password.');
+      toast.error('OTP verification required before resetting password.');
       setOtpStep(2);
       return;
     }
 
     if (!newPassword) {
       setErrorMsg('Please enter your new password.');
+      toast.error('Please enter your new password.');
       return;
     }
     if (newPassword.length < 6) {
       setErrorMsg('New password must be at least 6 characters long.');
+      toast.error('New password must be at least 6 characters long.');
       return;
     }
     if (newPassword !== confirmPassword) {
       setErrorMsg('Passwords do not match. Please re-enter passwords.');
+      toast.error('Passwords do not match. Please re-enter passwords.');
       return;
     }
 
@@ -208,10 +223,12 @@ export const AuthModal = ({
         otp: otpCode.trim(),
         newPassword,
       });
+      toast.success('Password reset successfully!');
       setOtpStep(4); // Success step
     } catch (err) {
       console.error('Reset Password Error:', err);
       setErrorMsg(err.message || 'Failed to save new password. Please try again.');
+      toast.error(err.message || 'Failed to save new password.');
     } finally {
       setLoading(false);
     }

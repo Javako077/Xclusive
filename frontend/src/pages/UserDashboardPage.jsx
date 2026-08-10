@@ -4,12 +4,14 @@ import { UserProfileModal } from '../components/UserProfileModal';
 import { Footer } from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/api';
+import { toast } from 'react-toastify';
 
 export const UserDashboardPage = ({ user, setUser, onDeleteSavedPlan }) => {
   const navigate = useNavigate();
   const [profileModalOpen, setProfileModalOpen] = useState(false);
 
   const handleLogout = () => {
+    toast.info('Signed out of Xclusive session.');
     apiService.logout();
     setUser(null);
     navigate('/');

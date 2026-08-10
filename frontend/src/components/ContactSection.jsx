@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, MessageSquare, ShieldCheck, ExternalLink } from 'lucide-react';
 import { apiService } from '../services/api';
+import { toast } from 'react-toastify';
 
 export const ContactSection = () => {
   const [name, setName] = useState('');
@@ -19,9 +20,10 @@ export const ContactSection = () => {
     try {
       await apiService.submitContact({ name, email, phone, goal, message });
       setSubmitted(true);
+      toast.success('Inquiry transmitted! We will reach out within 24 hours.');
     } catch (err) {
       console.error('Contact API error:', err);
-      alert(err.message || 'Error submitting message. Please try again.');
+      toast.error(err.message || 'Error submitting message. Please try again.');
     } finally {
       setLoading(false);
     }

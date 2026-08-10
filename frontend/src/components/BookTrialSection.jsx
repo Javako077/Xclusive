@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, Mail, Phone, Sparkles, CheckCircle2, ArrowRight, ShieldCheck, CreditCard } from 'lucide-react';
 import { apiService } from '../services/api';
+import { toast } from 'react-toastify';
 
 const INITIAL_10_SLOTS = [
   // Morning Slots (5:00 AM - 10:00 AM)
@@ -80,8 +81,9 @@ export const BookTrialSection = ({ user }) => {
         );
       }
       setSubmitted(true);
+      toast.success('Free Trial session booked successfully!');
     } catch (err) {
-      alert(err.message || 'Slot overbooking prevented by backend concurrency check.');
+      toast.error(err.message || 'Slot overbooking prevented by backend concurrency check.');
     } finally {
       setLoading(false);
     }

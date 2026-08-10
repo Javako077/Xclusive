@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, ShieldCheck, CreditCard, User, Mail, Phone, Lock, Sparkles, ArrowRight, ArrowLeft, Clock, Calendar } from 'lucide-react';
 import { apiService } from '../services/api';
+import { toast } from 'react-toastify';
 
 const INITIAL_10_SLOTS = [
   // Morning Slots (5:00 AM - 10:00 AM)
@@ -65,7 +66,7 @@ export const CheckoutModal = ({ isOpen, onClose, selectedPlan, user }) => {
     // Verify slot availability
     const targetSlot = slots.find((s) => s.time === selectedSlotTime);
     if (targetSlot && (targetSlot.booked >= targetSlot.max || targetSlot.isBooked)) {
-      alert('This workout slot is currently BOOKED / FULL (4/4 persons booked). Please select an available slot.');
+      toast.warning('This workout slot is currently BOOKED / FULL (4/4 persons booked). Please select an available slot.');
       return;
     }
 
@@ -107,8 +108,9 @@ export const CheckoutModal = ({ isOpen, onClose, selectedPlan, user }) => {
 
       setConfirmationId(`XCL-${Math.floor(100000 + Math.random() * 900000)}`);
       setStep(3);
+      toast.success('Membership activated & workout slot reserved successfully!');
     } catch (err) {
-      alert(err.message || 'Slot overbooking prevented by backend concurrency check. Please select an available slot.');
+      toast.error(err.message || 'Slot overbooking prevented by backend concurrency check. Please select an available slot.');
     } finally {
       setLoading(false);
     }

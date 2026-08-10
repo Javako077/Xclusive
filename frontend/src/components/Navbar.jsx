@@ -59,7 +59,7 @@ export const Navbar = ({
           : 'bg-gradient-to-b from-black via-black/80 to-transparent py-5 border-b border-white/5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
         <a href="#hero" className="flex items-center gap-3 group shrink-0 py-1">
           <div className="w-10 h-10 sm:w-10 sm:h-10 lg:w-10 lg:h-10 rounded-full bg-zinc-950 border-2 border-[#D4AF37] p-1.5 flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.4)] group-hover:shadow-[0_0_25px_rgba(255,215,0,0.7)] group-hover:border-[#FFD700] group-hover:scale-105 transition-all duration-300 overflow-hidden shrink-0">

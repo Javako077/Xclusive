@@ -25,6 +25,8 @@ import { AdminLoginPage } from './pages/AdminLoginPage';
 import { AdminForgotPasswordPage } from './pages/AdminForgotPasswordPage';
 import { Footer } from './components/Footer';
 import { apiService } from './services/api';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -310,6 +312,29 @@ export default function App() {
         loading={profileLoading}
         onLogout={handleUserLogout}
         onDeleteSavedPlan={handleDeleteSavedPlan}
+      />
+
+      {/* GLOBAL TOAST NOTIFICATIONS */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        toastStyle={{
+          backgroundColor: '#09090b',
+          color: '#ffffff',
+          border: '1px solid rgba(212, 175, 55, 0.3)',
+          borderRadius: '12px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.8)',
+          fontSize: '13px',
+          fontWeight: '500',
+        }}
       />
     </>
   );

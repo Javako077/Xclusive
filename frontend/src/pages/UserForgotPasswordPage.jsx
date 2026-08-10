@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { KeyRound, Mail, ShieldCheck, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, ArrowRight, ArrowLeft, RefreshCw, Sparkles } from 'lucide-react';
 import { apiService } from '../services/api';
 import { OtpBoxInput } from '../components/OtpBoxInput';
+import { toast } from 'react-toastify';
 
 export const UserForgotPasswordPage = () => {
   // Step 1: Enter Email
@@ -16,6 +17,7 @@ export const UserForgotPasswordPage = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -42,6 +44,7 @@ export const UserForgotPasswordPage = () => {
     if (e) e.preventDefault();
     if (!email || !email.trim()) {
       setError('Please enter your registered User email address.');
+      toast.error('Please enter your registered User email address.');
       return;
     }
 
@@ -51,12 +54,16 @@ export const UserForgotPasswordPage = () => {
 
     try {
       const res = await apiService.sendOtp({ recoveryTarget: email.trim() });
-      setSuccessNotice(res.message || 'Verification OTP code dispatched to your email address.');
+      const msg = res.message || 'Verification OTP code dispatched to your email address.';
+      setSuccessNotice(msg);
+      toast.info(msg);
       setCountdown(60); // Start 60-second countdown timer
       setStep(2);
     } catch (err) {
       console.error('User Forgot Password Error:', err);
-      setError(err.message || 'Failed to dispatch verification OTP. Please check your email.');
+      const msg = err.message || 'Failed to dispatch verification OTP. Please check your email.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -74,6 +81,7 @@ export const UserForgotPasswordPage = () => {
     e.preventDefault();
     if (!otp || otp.trim().length !== 6) {
       setError('Please enter the complete 6-digit verification code.');
+      toast.error('Please enter the complete 6-digit verification code.');
       return;
     }
 
@@ -87,10 +95,13 @@ export const UserForgotPasswordPage = () => {
       });
       setIsOtpVerified(true);
       setSuccessNotice('OTP verified successfully! Enter your new password below.');
+      toast.success('OTP verified successfully! Enter your new password below.');
       setStep(3); // Navigate to Reset Password page ONLY on success!
     } catch (err) {
       console.error('User OTP Verification Error:', err);
-      setError(err.message || 'Invalid or expired OTP code. Please check the 6 digits and try again.');
+      const msg = err.message || 'Invalid or expired OTP code. Please check the 6 digits and try again.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -101,20 +112,24 @@ export const UserForgotPasswordPage = () => {
     e.preventDefault();
     if (!isOtpVerified) {
       setError('OTP verification required before resetting password.');
+      toast.error('OTP verification required before resetting password.');
       setStep(2);
       return;
     }
 
     if (!newPassword) {
       setError('Please enter your new password.');
+      toast.error('Please enter your new password.');
       return;
     }
     if (newPassword.length < 6) {
       setError('New password must be at least 6 characters long.');
+      toast.error('New password must be at least 6 characters long.');
       return;
     }
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match. Please re-enter passwords.');
+      toast.error('Passwords do not match. Please re-enter passwords.');
       return;
     }
 
@@ -127,10 +142,13 @@ export const UserForgotPasswordPage = () => {
         otp: otp.trim(),
         newPassword,
       });
+      toast.success('Password updated successfully!');
       setStep(4); // Success step
     } catch (err) {
       console.error('User Reset Password Error:', err);
-      setError(err.message || 'Failed to save new password. Please try again.');
+      const msg = err.message || 'Failed to save new password. Please try again.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
