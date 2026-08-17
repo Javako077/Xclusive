@@ -311,3 +311,59 @@ export const verifyOtpAndResetPassword = async (req, res) => {
     res.status(500).json({ error: error.message || "Failed to reset password." });
   }
 };
+
+// @desc    Authenticate or register user via Google / Apple social login
+// @route   POST /api/auth/social-login
+// @access  Public
+export const socialLogin = async (req, res) => {
+  try {
+    const { provider, email, name } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: "Email ID is required for social authentication." });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    let user = await User.findOne({ email: cleanEmail });
+
+    if (user) {
+      if (user.isBlocked) {
+        return res.status(403).json({ error: "Your account has been suspended by an administrator." });
+      }
+    } else {
+      // Auto-create user account for social login
+      const displayName = name && name.trim() ? name.trim() : email.split("@")[0].toUpperCase();
+      const randomPassword = "social_" + Math.random().toString(36).substring(2, 10);
+
+      user = await User.create({
+        name: displayName,
+        email: cleanEmail,
+        password: randomPassword,
+        goal: "Muscle Building & Hypertrophy",
+        role: "user",
+      });
+    }
+
+    const token = generateToken(user._id);
+
+    return res.json({
+      message: `Successfully authenticated via ${provider || 'Social Login'}`,
+      token,
+      user: {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        phone: user.phone || "",
+        role: user.role || "user",
+        membershipPlan: user.membershipPlan,
+        joinDate: user.joinDate,
+        goal: user.goal,
+        savedPlans: user.savedPlans || [],
+      },
+    });
+  } catch (error) {
+    console.error("[Social Login Error]", error);
+    return res.status(500).json({ error: error.message || "Failed social authentication" });
+  }
+};
+

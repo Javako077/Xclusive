@@ -13,6 +13,7 @@ import aiRoutes from "./routes/aiRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import adminAuthRoutes from "./routes/adminAuthRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -44,6 +45,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/payment", paymentRoutes);
 
 // Admin Dedicated Routes (Completely separate from User Auth)
 app.use("/api/admin/auth", adminAuthRoutes);

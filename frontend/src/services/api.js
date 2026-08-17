@@ -116,9 +116,21 @@ export const apiService = {
     return result.user;
   },
 
+  async socialLogin(data) {
+    const result = await request("/api/auth/social-login", {
+      method: "POST",
+      body: data,
+    });
+    if (result?.token) {
+      localStorage.setItem("token", result.token);
+    }
+    return result.user;
+  },
+
   async getMe() {
     return await request("/api/auth/me", { authType: "user" });
   },
+
 
   async sendOtp(data) {
     return await request("/api/auth/send-otp", {
@@ -342,4 +354,34 @@ export const apiService = {
   async fetchAdminReports() {
     return await request("/api/admin/reports", { authType: "admin" });
   },
+
+  // Razorpay Payment APIs
+  async getPaymentPlans() {
+    return await request("/api/payment/plans", { authType: "user" });
+  },
+
+  async createPaymentOrder(data) {
+    return await request("/api/payment/create-order", {
+      method: "POST",
+      body: data,
+      authType: "user",
+    });
+  },
+
+  async verifyPayment(data) {
+    return await request("/api/payment/verify", {
+      method: "POST",
+      body: data,
+      authType: "user",
+    });
+  },
+
+  async reportPaymentFailure(data) {
+    return await request("/api/payment/failed", {
+      method: "POST",
+      body: data,
+      authType: "user",
+    });
+  },
 };
+
