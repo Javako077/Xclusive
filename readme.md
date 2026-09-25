@@ -1,30 +1,31 @@
-# 🏋️‍♂️ APEX Athletic Lab - Xclusive Gym Web App
+# 🏋️ Xclusive Gym Web App
 
-Welcome to **APEX Athletic Lab (Xclusive Gym)**! Ye ek full-stack MERN web application hai jisme premium fitness features, interactive fitness calculators, user authentication aur ek dynamic **APEX AI Coach** (powered by Gemini AI) shaamil hai.
+Welcome to **Xclusive Gym**!
 
-Humne is project ke Frontend aur Backend ko completely separate (independent) kar diya hai, jisse ye dono folder bina kisi dependency ke aapas me clean REST APIs ke jariye coordinate karte hain.
+The frontend and backend of this project have been completely separated into independent applications. Both applications communicate cleanly through REST APIs without being directly dependent on each other.
 
 ---
 
 ## ✨ Features Overview
 
 ### 1. 🌐 Frontend (React + Vite + Tailwind CSS)
-* **Premium UI/UX:** Dark-themed sleek design with modern animations (using Framer Motion), vibrant HSL colors, and Outfit font.
+
+* **Premium UI/UX:** A sleek dark-themed design with modern animations using Framer Motion, vibrant HSL colors, and the Outfit font.
 * **Interactive Calculators:**
-  - **1-Rep Max (1RM) Calculator:** Apne maximum strength lifts calculate karne ke liye.
-  - **Macro Calculator:** Apne fitness goals ke hisab se nutrition targets (protein, carbs, fats) split janne ke liye.
-  - **BMI Calculator:** Health and weight metrics trace karne ke liye.
-* **APEX AI Coach:** Powered by **Gemini 3.6 Flash**. Isse aap personal training plans, nutrition advices aur workouts schedule ke recommendations le sakte hain aur use profile me save kar sakte hain.
-* **Before-After Slider:** User transformations ko interactively explore karne ke liye vertical slider.
-* **Facility Tour & Videos:** Virtual tour modal aur exercise biomechanics animations.
-* **Contact & Free Pass Forms:** New users ke liye gym free pass generate karne ka simple form flow.
+
+  * **1-Rep Max (1RM) Calculator:** Calculates your maximum strength for different lifts.
+  * **Macro Calculator:** Calculates personalized protein, carbohydrate, and fat targets based on fitness goals.
+  * **BMI Calculator:** Helps users track basic body mass and weight-related metrics.
+* **Before-After Slider:** Allows users to interactively explore fitness transformation results using a vertical slider.
+* **Facility Tour & Videos:** Includes a virtual tour modal and exercise biomechanics animations.
+* **Contact & Free Pass Forms:** Provides simple forms for users to contact the gym and generate a free gym pass.
 
 ### 2. ⚡ Backend (Node.js + Express.js + MongoDB)
-* **Secure Auth:** Proper password hashing with **Bcrypt.js** aur sessions authentication securely control karne ke liye **JWT (JSON Web Tokens)** logic.
-* **Modular Code Structure:** MVC pattern (Models, Controllers, Routes, Middlewares).
-* **Gemini AI Integration:** API ke zariye custom system prompt injection ke sath AI Coach system response handling.
-* **Database Management:** MongoDB Database with Mongoose schemas (Users, Saved Workout Plans, Contact Enquiries).
-* **Universal CORS Enabled:** Kisi bhi dynamic location/port se API calling compatibility ensure karne ke liye.
+
+* **Secure Authentication:** Uses **Bcrypt.js** for secure password hashing and **JWT (JSON Web Tokens)** for authentication and session management.
+* **Modular Code Structure:** Follows the MVC architecture with Models, Controllers, Routes, and Middleware.
+* **Database Management:** Uses MongoDB with Mongoose schemas for managing Users, Saved Workout Plans, and Contact Enquiries.
+* **CORS Support:** Configured to allow API requests from different frontend locations and ports.
 
 ---
 
@@ -35,74 +36,89 @@ xclusiveWeb/
 ├── backend/                  <-- Express & Node.js API Server
 │   ├── config/               <-- MongoDB Database Connection
 │   ├── controllers/          <-- Main controller logic files (Auth, User, Contact, AI)
-│   ├── middleware/           <-- Authentication protection middlewares (JWT)
+│   ├── middleware/           <-- Authentication protection middleware (JWT)
 │   ├── models/               <-- Mongoose Schemas (User.js, Contact.js)
-│   ├── routes/               <-- API Endpoint path routes
-│   ├── .env                  <-- Port, MongoDB Uri, JWT Secret, Gemini key
-│   ├── package.json          <-- Backend-only dependencies list
-│   └── server.js             <-- Node application server root
+│   ├── routes/               <-- API Endpoint Routes
+│   ├── .env                  <-- Port, MongoDB URI, JWT Secret
+│   ├── package.json          <-- Backend-only dependencies
+│   └── server.js             <-- Node.js application entry point
 │
-└── frontend/                 <-- React Client App
+└── frontend/                 <-- React Client Application
     ├── src/
-    │   ├── components/       <-- Modular UI sections & modals
-    │   ├── services/api.js   <-- Backend REST API calling service
-    │   └── App.jsx           <-- App entry view configuration
-    ├── .env                  <-- VITE_API_BASE_URL (Points to backend)
-    └── package.json          <-- React-only dependencies list
+    │   ├── components/       <-- Modular UI sections and modals
+    │   ├── services/api.js   <-- Backend REST API service
+    │   └── App.jsx           <-- Application entry configuration
+    ├── .env                  <-- VITE_API_BASE_URL (Backend URL)
+    └── package.json          <-- Frontend dependencies
 ```
 
 ---
 
-## 🚀 How to Setup & Run the Project
+## 🚀 How to Set Up and Run the Project
 
-Dono project separate hain, isliye inko chalane ke liye aapko inke respective folders me jana hoga.
+Since the frontend and backend are separate applications, they need to be run from their respective folders.
 
 ### Step 1: Backend Configuration
-1. Naye terminal me backend folder me jayein:
-   ```bash
-   cd xclusiveWeb/backend
-   ```
-2. Dependencies install karein:
-   ```bash
-   npm install
-   ```
-3. Ek `.env` file banayein (ya `.env.example` ko copy karke `.env` rename karein) aur credentials add karein:
-   ```env
-   PORT=3000
-   MONGO_URI=mongodb://localhost:27017/xclusive
-   JWT_SECRET=your_secret_key_here
-   GEMINI_API_KEY=your_gemini_api_key
-   ```
-4. Backend ko Dev mode me chalayein:
-   ```bash
-   npm run dev
-   ```
-   *Note: Backend server **http://localhost:3000** par run hoga.*
+
+1. Open a new terminal and navigate to the backend folder:
+
+```bash
+cd xclusiveWeb/backend
+```
+
+2. Install the dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env` file, or copy `.env.example` and rename it to `.env`. Then add the required credentials:
+
+```env
+PORT=3000
+MONGO_URI=mongodb://localhost:27017/xclusive
+JWT_SECRET=your_secret_key_here
+
+```
+
+4. Start the backend in development mode:
+
+```bash
+npm run dev
+```
+
+**Note:** The backend server will run at:
+
+`http://localhost:3000`
 
 ---
 
 ### Step 2: Frontend Configuration
-1. Ek alag (naye) terminal me frontend folder me jayein:
-   ```bash
-   cd xclusiveWeb/frontend
-   ```
-2. Dependencies install karein:
-   ```bash
-   npm install
-   ```
-3. Ek `.env` file banayein (ya `.env.example` ko copy karke `.env` rename karein) aur backend URL specify karein:
-   ```env
-   VITE_API_BASE_URL=http://localhost:3000
-   ```
-4. Frontend ko chalayein:
-   ```bash
-   npm run dev
-   ```
-   *Note: Frontend server **http://localhost:5173** par open hoga.*
 
----
+1. Open another terminal and navigate to the frontend folder:
 
-## 🔒 Security Best Practices
-- Kabhi bhi backend ki `.env` file ko git/github pe commit na karein.
-- User data fetch ya plans change karne se pehle frontend automatically local token check karega aur standard `Bearer <token>` request header handle karega.
-- Mongoose schemas validations ensure karte hain ki invalid ya empty inputs submit na ho payein.
+```bash
+cd xclusiveWeb/frontend
+```
+
+2. Install the dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env` file, or copy `.env.example` and rename it to `.env`. Specify the backend URL:
+
+```env
+VITE_API_BASE_URL=http://localhost:3000
+```
+
+4. Start the frontend development server:
+
+```bash
+npm run dev
+```
+
+**Note:** The frontend will be available at:
+
+`http://localhost:5173`
